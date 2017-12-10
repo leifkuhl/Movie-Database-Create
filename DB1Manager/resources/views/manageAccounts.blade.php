@@ -94,7 +94,7 @@
                                     <label for="AccountName">Full Account Name (e.g. db_ws1718_s1):</label>
                                     <input type="text" class="form-control" id="AccountName">     
                                 </div>
-                                <button type="submit" class="btn btn-primary">Generate List</button>
+                                <button type="submit" class="btn btn-primary">Reset</button>
                             </form>
                         </div>
                     </div>
