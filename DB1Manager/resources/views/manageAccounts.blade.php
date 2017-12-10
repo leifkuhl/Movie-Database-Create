@@ -91,7 +91,7 @@
 
                                 </div>
                                 <div class="form-group">
-                                    <label for="AccountName">Full Account Name (e.g. db_ws1718_s1):</label>
+                                    <label for="AccountName">Full account name (e.g. db_ws1718_s1):</label>
                                     <input type="text" class="form-control" id="AccountName">     
                                 </div>
                                 <button type="submit" class="btn btn-primary">Reset</button>

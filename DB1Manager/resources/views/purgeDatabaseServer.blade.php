@@ -10,9 +10,30 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-danger">
-                <div class="panel-heading">Purge Database Server</div>
+                <div class="panel-heading"><h1>Purge Database Server</h1></div>
                 <div class="panel-body">
-                   
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#purge">Purge</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="purge" class="tab-pane fade in active">
+                            <h3>Purge Database Server</h3>
+                            <form action="/action_page.php">
+                                <div class="form-group">
+                                    <label for="accType">Select account type:</label>
+                                    <select class="form-control" id="accType">
+                                        <option>All</option>
+                                        <option>Student</option>
+                                        <option>Tutor</option>
+                                    </select>
+                                </div>
+                                <div class="checkbox">
+                                    <label><input type="checkbox" value="">Yes I am sure</label>
+                                </div>
+                                <button type="submit" class="btn btn-danger">Purge</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
