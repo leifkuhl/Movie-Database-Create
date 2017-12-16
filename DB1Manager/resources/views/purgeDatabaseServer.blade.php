@@ -18,17 +18,17 @@
                     <div class="tab-content">
                         <div id="purge" class="tab-pane fade in active">
                             <h3>Purge Database Server</h3>
-                            <form action="/action_page.php">
+                            <form action="purge">
                                 <div class="form-group">
                                     <label for="accType">Select account type:</label>
-                                    <select class="form-control" id="accType">
+                                    <select class="form-control" id="accType" name="accType">
                                         <option>All</option>
                                         <option>Student</option>
                                         <option>Tutor</option>
                                     </select>
                                 </div>
                                 <div class="checkbox">
-                                    <label><input type="checkbox" value="">Yes I am sure</label>
+                                    <label><input type="checkbox" id="sure" name="sure" value="yes">Yes I am sure</label>
                                 </div>
                                 <button type="submit" class="btn btn-danger">Purge</button>
                             </form>

@@ -16,33 +16,23 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/', function () {
-    return view('home');
+    return redirect('/home');
 });
 
-Route::get('test/{username}', function ($username) {
-    return view('test', ['name' => $username]);
-});
+Route::get('/manageAccounts',  'ManageAccountsController@index')->name('manageAccounts');
+Route::get('/createAccounts',  'ManageAccountsController@createAccounts');
+Route::get('/listAccounts',  'ManageAccountsController@listAccounts');
+Route::get('/generateLoginList',  'ManageAccountsController@generateLoginList');
+Route::get('/resetPassword',  'ManageAccountsController@resetPassword');
+
+Route::get('/manageHosts', 'ManageHostsController@index')->name('manageHosts');
+Route::get('/addHost', 'ManageHostsController@addHost');
+Route::get('/removeHost', 'ManageHostsController@removeHost');
 
 
+Route::get('/showGrants', 'ShowGrantsController@index' )->name('showGrants');
+Route::get('/show', 'ShowGrantsController@showGrants' );
 
-Route::get('/manageAccounts', function () {
-     return view('manageAccounts');
-})->name('manageAccounts')->middleware('auth');
+Route::get('/purge', 'PurgeDatabaseServerController@PurgeDatabaseServer');
 
-Route::get('/manageHosts', function () {
-     return view('manageHosts');
-})->name('manageHosts')->middleware('auth');
-
-Route::get('/show', function () {
-     return redirect('/showGrants');
-});
-Route::get('/showGrants', function () {
-     return view('showGrants');
-})->name('showGrants')->middleware('auth');
-
-Route::get('/purge', function () {
-     return redirect('/purgeDatabaseServer');
-});
-Route::get('/purgeDatabaseServer', function () {
-     return view('purgeDatabaseServer');
-})->name('purgeDatabaseServer')->middleware('auth');
+Route::get('/purgeDatabaseServer','PurgeDatabaseServerController@index')->name('purgeDatabaseServer');

@@ -18,10 +18,10 @@
                     <div class="tab-content">
                         <div id="show" class="tab-pane fade in active">
                             <h3>Show Grants</h3>
-                            <form action="/action_page.php">
+                            <form action="show">
                                 <div class="form-group">
                                     <label for="accType">Select account type:</label>
-                                    <select class="form-control" id="accType">
+                                    <select class="form-control" id="accType" name="accType">
                                         <option>All</option>
                                         <option>Student</option>
                                         <option>Tutor</option>
@@ -29,7 +29,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="HostName">Host name (can be left blank for a general search)</label>
-                                    <input type="text" class="form-control" id="HostName">     
+                                    <input type="text" class="form-control" id="HostName" name="HostName">     
                                 </div>
                                 <button type="submit" class="btn btn-primary">Show</button>
 
