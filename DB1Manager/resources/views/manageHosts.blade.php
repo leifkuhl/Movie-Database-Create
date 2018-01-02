@@ -21,8 +21,8 @@
                             <h3>Add Host</h3>
                             <form action="addHost">
                                 <div class="form-group">
-                                    <label for="HostName">Host name</label>
-                                    <input type="text" class="form-control" id="HostName" name="HostName">     
+                                    <label for="hostName">Host name</label>
+                                    <input type="text" class="form-control" id="hostName" name="hostName">     
                                 </div>
                                 <button type="submit" class="btn btn-primary">Add</button>
                             </form>
@@ -31,8 +31,8 @@
                             <h3>Remove Host</h3>
                             <form action="removeHost">
                                 <div class="form-group">
-                                    <label for="HostName">Host name</label>
-                                    <input type="text" class="form-control" id="HostName" name="HostName">     
+                                    <label for="hostName">Host name</label>
+                                    <input type="text" class="form-control" id="hostName" name="hostName">     
                                 </div>
                                 <button type="submit" class="btn btn-danger">Remove</button>
                             </form>

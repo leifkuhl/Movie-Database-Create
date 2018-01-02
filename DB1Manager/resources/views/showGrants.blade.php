@@ -28,8 +28,8 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="HostName">Host name (can be left blank for a general search)</label>
-                                    <input type="text" class="form-control" id="HostName" name="HostName">     
+                                    <label for="hostName">Host name (can be left blank for a general search)</label>
+                                    <input type="text" class="form-control" id="hostName" name="hostName">     
                                 </div>
                                 <button type="submit" class="btn btn-primary">Show</button>
 

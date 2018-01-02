@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+include '..\app\CustomDatabaseManager.php';
+
 use Illuminate\Http\Request;
 
 /**
@@ -37,6 +39,10 @@ class ManageHostsController extends Controller{
     {
         $hostName = $request->input('hostName');
         
+        $customDBManager = new \CustomDatabaseManager(app(), app('db.factory'));
+        
+        $customDBManager->replicateMovieDB($hostName);
+        
         return $request;
     }
     
@@ -49,6 +55,10 @@ class ManageHostsController extends Controller{
     public function removeHost(Request $request)
     {
         $hostName = $request->input('hostName');
+        
+        $customDBManager = new \CustomDatabaseManager(app(), app('db.factory'));
+        
+        $customDBManager->deleteDB($hostName);
         
         return $request;
     }

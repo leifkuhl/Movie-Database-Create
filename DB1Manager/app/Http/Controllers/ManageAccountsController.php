@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+include '..\app\CustomDatabaseManager.php';
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * The controller for the account manager used to create and list accounts
  * generate the login list and reset passwords
  *
  * @author mstu15
- * @version 16.12.2017
+ * @version 02.01.2018
  */
 class ManageAccountsController extends Controller{
     
@@ -41,46 +44,145 @@ class ManageAccountsController extends Controller{
     
     public function createAccounts(Request $request)
     {
-        $this->middleware('auth');
         $accType = $request->input('accType');
         $count = $request->input('count');
         $semesterType = $request->input('semesterType');
         $semesterYear = $request->input('semesterYear');
         $startIndex = $request->input('startIndex');
+        $accTypePrefix;
         
-             
-        if(strcasecmp("student", $accType) == 0)
+        
+        /* * * * *
+         * Setup *
+         * * * * */
+        
+        $customDBManager = new \CustomDatabaseManager(app(), app('db.factory'));
+        
+        // Checks if the semesterYear was left empty and fills it if that was the case
+        if ($semesterYear == null)
         {
+            $year = substr(date('Y'),2);
             
+            $semesterYear = $year;
+            
+            // for WS als add the nextyear to the semesterYear 
+            if(strcasecmp("WS", $semesterType) == 0)
+            {
+                 $nextYear = substr(date('Y', strtotime('+1 year')),2);
+                 $semesterYear .= $nextYear;
+            }
+        }
+        
+        // Sets the accTypePrefix
+        if(strcasecmp("Tutor", $accType) == 0 )
+        {
+            $accTypePrefix = "t";
+        }
+        else
+        {
+            $accTypePrefix = "s";
         }
         
         
-        return $request;
+        $prefix = "db_$semesterType$semesterYear"."_$accTypePrefix";
+        
+        // Set the startindex if left empty
+        
+        if($startIndex == null)
+        {
+            $startIndex = $customDBManager->getMaxDBNumber($prefix);
+            $startIndex += 1;
+        }
+        
+        /* * * * * * * * * * * * *
+         * Create the Databases  *
+         * * * * * * * * * * * * *
+        
+        for($i = $startIndex; $i < $count + $startIndex; $i++)
+        {
+            $dbName = $prefix.$i;
+            $customDBManager->replicateMovieDB($dbName);
+        }*/
+     
+        /* * * * * * * * * * * *
+         * Create the Accounts *
+         * * * * * * * * * * * */
+        
+        for($i = $startIndex; $i < $count + $startIndex; $i++)
+        {
+            $accName = $prefix.$i;
+            $customDBManager->createAccount($accName,$accType);
+        }
+        
+        
+        
+        return $prefix;
     }
     /**
      * List all Accounts of selected type
      * @param request the form data consists of:
      *      accType all, student or tutor accounts
-     * @return request echo
+     * @return Account List
      */
     
     public function listAccounts(Request $request)
     {
         $accType = $request->input('accType');
+        $accTypePrefix;
         
-        return $request;
+        // Sets the accTypePrefix
+        if(strcasecmp("Tutor", $accType) == 0 )
+        {
+            $accTypePrefix = "t";
+        }
+        else if (strcasecmp("Student", $accType) == 0 )
+        {
+            $accTypePrefix = "s";
+        }
+        else
+        {
+            $accTypePrefix = "";
+        }
+        return array_map('reset', DB::select("SELECT user FROM mysql.user WHERE user LIKE 'db_%_$accTypePrefix%' ORDER BY CHAR_LENGTH(user) ASC, user ASC"));
+        
     }
     /**
      * Generate a list with default logins and passwords for selected account type
      * @param request the form data consists of:
      *      accType all, student or tutor accounts
-     * @return request echo
+     * @return Login List
      */
     public function generateLoginList(Request $request)
     {
-         $accType = $request->input('accType');
+        $accType = $request->input('accType');
+        $customDBManager = new \CustomDatabaseManager(app(), app('db.factory'));
         
-        return $request;
+        $accTypePrefix;
+        
+        // Sets the accTypePrefix
+        if(strcasecmp("Tutor", $accType) == 0 )
+        {
+            $accTypePrefix = "t";
+        }
+        else if (strcasecmp("Student", $accType) == 0 )
+        {
+            $accTypePrefix = "s";
+        }
+        else
+        {
+            $accTypePrefix = "";
+        }
+        $accNames = array_map('reset', DB::select("SELECT user FROM mysql.user WHERE user LIKE 'db_%_$accTypePrefix%' ORDER BY CHAR_LENGTH(user) ASC, user ASC"));
+        $passwords;
+        
+        
+        foreach($accNames as $accName)
+        {
+            $passwords[$accName] = $customDBManager->getDefaultPwd($accName);
+        }
+        
+        
+        return $passwords; 
     }
     
     /**
@@ -93,7 +195,11 @@ class ManageAccountsController extends Controller{
     public function resetPassword(Request $request)
     {
         $accType = $request->input('accType');
-        $accountName = $request->input('accountName');
+        $accName = $request->input('accountName');
+        
+        $customDBManager = new \CustomDatabaseManager(app(), app('db.factory'));
+        
+        $customDBManager->setPwd($accName, $customDBManager->getDefaultPwd($accName));
         
         return $request;
     }
