@@ -53,6 +53,7 @@
                         </div>
                         <div id="list" class="tab-pane fade">
                             <h3>List All Existing Accounts</h3>
+                            @yield('accountList')
                             <form action="listAccounts">
                                 <div class="form-group">
                                     <label for="accType">Select account type:</label>
@@ -67,6 +68,7 @@
                         </div>
                         <div id="generate" class="tab-pane fade">
                             <h3>Generate Default Login List</h3>
+                            @yield('loginList')
                             <form action="generateLoginList">
                                 <div class="form-group">
                                     <label for="accType">Select account type:</label>

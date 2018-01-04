@@ -143,7 +143,10 @@ class ManageAccountsController extends Controller{
         {
             $accTypePrefix = "";
         }
-        return array_map('reset', DB::select("SELECT user FROM mysql.user WHERE user LIKE 'db_%_$accTypePrefix%' ORDER BY CHAR_LENGTH(user) ASC, user ASC"));
+        
+        $accounts = array_map('reset', DB::select("SELECT user FROM mysql.user WHERE user LIKE 'db_%_$accTypePrefix%' ORDER BY CHAR_LENGTH(user) ASC, user ASC"));
+        
+        return view('accountList',['formdata' => $accounts]);
         
     }
     /**
@@ -182,7 +185,8 @@ class ManageAccountsController extends Controller{
         }
         
         
-        return $passwords; 
+       return view('loginList',['formdata' => $passwords]);
+        
     }
     
     /**
