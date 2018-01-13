@@ -172,7 +172,6 @@ class ManageAccountsController extends Controller {
      * @return request echo
      */
     public function resetPassword(Request $request) {
-        $accType = $request->input('accType');
         $accName = $request->input('accountName');
 
         $customDBManager = new \CustomDatabaseManager(app(), app('db.factory'));

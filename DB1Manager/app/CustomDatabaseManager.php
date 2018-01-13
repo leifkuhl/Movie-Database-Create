@@ -3,8 +3,6 @@
 use Illuminate\Support\Facades\DB;
 use \Illuminate\Support\Facades\App;
 
-define('DELIMITER', '*');
-
 define('VPN', '%.vpn.tu-clausthal.de');   //VPN
 define('RZ', '%.rz.tu-clausthal.de');   //RZ & WLAN for TUC
 define('IFI', '%.in.tu-clausthal.de');    //IFI
@@ -15,7 +13,7 @@ define('DEFAULT_HOST', [VPN, IFI, RZ]); //default host
  * 
  *
  * @author mstu15
- * @version 12.01.2018
+ * @version 13.01.2018
  */
 
 class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
@@ -73,8 +71,8 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
     function setPwd($accName, $pwd) {
 
 
-        DB::connection()->statement("UPDATE mysql.user SET Password=PASSWORD('$pwd')
-		WHERE User='$accName'");
+        DB::connection()->statement("UPDATE mysql.user SET Password = PASSWORD('$pwd')
+		WHERE LOWER(USER)=LOWER('$accName')");
         DB::connection()->statement("FLUSH PRIVILEGES");
 
         //return "Update password for $user.";
@@ -133,6 +131,8 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
             /*
              * Checks if the Number after the prefix is higher than the previous 
              * max and replaces it with the highest value when this is the case.
+             * Note: the intval function ignores the _moviedb _testdb part of
+             * the databases because it is not a numeric value (PHP 7.1.11)
              */
             if (intval(substr($dbName, strlen($prefix))) > $maxNumber) {
                 $maxNumber = intval(substr($dbName, strlen($prefix)));
@@ -205,5 +205,4 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
         //dummy
         return 123456;
     }
-
 }
