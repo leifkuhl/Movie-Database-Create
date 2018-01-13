@@ -113,7 +113,7 @@ class ManageAccountsController extends Controller {
      * List all Accounts of selected type
      * @param request the form data consists of:
      *      accType all, student or tutor accounts
-     * @return Account List
+     * @return new view with Account List
      */
     public function listAccounts(Request $request) {
         $accType = $request->input('accType');
@@ -132,14 +132,14 @@ class ManageAccountsController extends Controller {
 
         $accNames = $customDBManager->getAccountNames($accTypePrefix);
 
-        return view('accountList', ['formdata' => $accNames]);
+        return view('accountList', ['tabledata' => $accNames]);
     }
 
     /**
      * Generate a list with default logins and passwords for selected account type
      * @param request the form data consists of:
      *      accType all, student or tutor accounts
-     * @return Login List
+     * @return new view with Login List
      */
     public function generateLoginList(Request $request) {
         $accType = $request->input('accType');
@@ -164,13 +164,12 @@ class ManageAccountsController extends Controller {
         }
 
 
-        return view('loginList', ['formdata' => $passwords]);
+        return view('loginList', ['tabledata' => $passwords]);
     }
 
     /**
      * Reset the password of selected account to default
      * @param request the form data consists of:
-     *      accType student or tutor accounts (this is maybe redundant)
      *      accountName the full account name (e.g. db_ws1718_s1)
      * @return request echo
      */

@@ -64,7 +64,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($formdata as $line): ?>
+                                    <?php foreach ($tabledata as $line): ?>
                                         <tr><td><?php echo $line; ?></td></tr>
                                     <?php endforeach; ?>
                                     </div>

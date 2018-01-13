@@ -79,8 +79,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($formdata as $index => $line): ?>
-                                        <tr><td><?php echo key($formdata);next($formdata); ?></td><td><?php echo $line; ?></td></tr>
+                                    <?php foreach ($tabledata as $index => $line): ?>
+                                        <tr><td><?php echo key($tabledata);next($tabledata); ?></td><td><?php echo $line; ?></td></tr>
                                     <?php endforeach; ?>
                                     </div>
                                 </tbody>

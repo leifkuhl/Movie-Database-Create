@@ -33,7 +33,7 @@ class ShowGrantsController extends Controller {
      * @param request the form data consists of:
      *      accType all, student or tutor accounts
      *      hostName the name from the host
-     * @return request echo
+     * @return new view with Grant List
      */
     public function showGrants(Request $request) {
         $accType = $request->input('accType');
@@ -116,7 +116,7 @@ class ShowGrantsController extends Controller {
                     $database = substr($grant, 0, $endIndex);
 
                     $userCollumn[$rowIndex] = $accName;
-                    $hostCollumn[$rowIndex] = $host;
+                    $hostCollumn[$rowIndex] = $hostName;
                     $databaseCollumn[$rowIndex] = $database;
                     $privilegesCollumn[$rowIndex] = $privileges;
                     $rowIndex++;
