@@ -6,13 +6,14 @@ include '..\app\CustomDatabaseManager.php';
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use CustomDatabaseManager;
 
 /**
  * The controller for the account manager used to create and list accounts
  * generate the login list and reset passwords
  *
  * @author mstu15
- * @version 12.01.2018
+ * @version 13.01.2018
  */
 class ManageAccountsController extends Controller {
 
@@ -52,7 +53,7 @@ class ManageAccountsController extends Controller {
          * Setup *
          * * * * */
 
-        $customDBManager = new \CustomDatabaseManager(app(), app('db.factory'));
+        $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
 
         // Checks if the semesterYear was left empty and fills it if that was the case
         if ($semesterYear == null) {
@@ -116,6 +117,8 @@ class ManageAccountsController extends Controller {
      */
     public function listAccounts(Request $request) {
         $accType = $request->input('accType');
+        $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
+        
         $accTypePrefix;
 
         // Sets the accTypePrefix
@@ -127,9 +130,9 @@ class ManageAccountsController extends Controller {
             $accTypePrefix = "";
         }
 
-        $accounts = array_map('reset', DB::select("SELECT DISTINCT user FROM mysql.user WHERE user LIKE 'db_%_$accTypePrefix%' ORDER BY CHAR_LENGTH(user) ASC, user ASC"));
+        $accNames = $customDBManager->getAccountNames($accTypePrefix);
 
-        return view('accountList', ['formdata' => $accounts]);
+        return view('accountList', ['formdata' => $accNames]);
     }
 
     /**
@@ -140,7 +143,7 @@ class ManageAccountsController extends Controller {
      */
     public function generateLoginList(Request $request) {
         $accType = $request->input('accType');
-        $customDBManager = new \CustomDatabaseManager(app(), app('db.factory'));
+        $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
 
         $accTypePrefix;
 
@@ -152,7 +155,7 @@ class ManageAccountsController extends Controller {
         } else {
             $accTypePrefix = "";
         }
-        $accNames = array_map('reset', DB::select("SELECT DISTINCT user FROM mysql.user WHERE user LIKE 'db_%_$accTypePrefix%' ORDER BY CHAR_LENGTH(user) ASC, user ASC"));
+        $accNames = $customDBManager->getAccountNames($accTypePrefix);
         $passwords;
 
 
@@ -174,7 +177,7 @@ class ManageAccountsController extends Controller {
     public function resetPassword(Request $request) {
         $accName = $request->input('accountName');
 
-        $customDBManager = new \CustomDatabaseManager(app(), app('db.factory'));
+        $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
 
         $customDBManager->setPwd($accName, $customDBManager->getDefaultPwd($accName));
 

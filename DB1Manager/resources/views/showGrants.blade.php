@@ -18,6 +18,7 @@
                     <div class="tab-content">
                         <div id="show" class="tab-pane fade in active">
                             <h3>Show Grants</h3>
+                            @yield('grantList')
                             <form action="show">
                                 <div class="form-group">
                                     <label for="accType">Select account type:</label>

@@ -147,6 +147,8 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
      * 
      * @param $accName the given username
      * @param $accType tutor or student
+     * @param $host host to set permissions on
+     * 
      */
     function setPermissions($accName, $accType, $host) {
 
@@ -165,8 +167,9 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
     /**
      * Lookup for Privileges on Databases
      * 
-     * @param $accName the given username
-     * @param $accType tutor or student
+     * @param $db string with information which db
+     * 
+     * @return String with Privileges
      */
     function getDBPrivileges($db) {
 
@@ -199,10 +202,43 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
      * Get the Default Password for the Account
      * 
      * @param $accName the given username
-     * @param $accType tutor or student
+     * 
+     * @return default password
      */
     function getDefaultPwd($accName) {
-        //dummy
+       // dummy
         return 123456;
+    }
+    /**
+     * Get the Account names 
+     * 
+     * @param $accTypePrefix student tutor or all accounts
+     * 
+     * @return array with account names
+     */
+    function getAccountNames($accTypePrefix)
+    {
+        return array_map('reset', DB::select("SELECT DISTINCT user FROM mysql.user WHERE user LIKE 'db_%_$accTypePrefix%' ORDER BY CHAR_LENGTH(user) ASC, user ASC"));
+    }
+    /**
+     * Get the Grants for Account on host 
+     * 
+     * @param $accName Name of Account
+     * @param $host Host from account
+     * 
+     * @return array with grants
+     */
+    function getGrants($accName, $hostname)
+    {
+       return array_map('reset', DB::select("SHOW GRANTS FOR '$accName'@'$hostname'"));
+    }
+    /**
+     * Get the Hosts
+     * 
+     * @return array with hosts
+     */
+    function getHosts()
+    {
+        return DEFAULT_HOST;
     }
 }
