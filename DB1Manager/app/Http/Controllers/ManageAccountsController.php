@@ -13,7 +13,7 @@ use CustomDatabaseManager;
  * generate the login list and reset passwords
  *
  * @author mstu15
- * @version 13.01.2018
+ * @version 14.01.2018
  */
 class ManageAccountsController extends Controller {
 

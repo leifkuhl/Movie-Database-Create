@@ -19,6 +19,12 @@ Route::get('/', function () {
     return redirect('/home');
 });
 
+Route::get('/setup',  'SetupUsersController@index')->name('setupUsers');
+Route::get('/setupUsers',  'SetupUsersController@setupUsers');
+
+Route::get('/setupHosts',  'SetupHostsController@index')->name('setupHosts');
+Route::get('/setupDefaultHosts',  'SetupHostsController@setupHosts');
+
 Route::get('/manageAccounts',  'ManageAccountsController@index')->name('manageAccounts');
 Route::get('/createAccounts',  'ManageAccountsController@createAccounts');
 Route::get('/listAccounts',  'ManageAccountsController@listAccounts');

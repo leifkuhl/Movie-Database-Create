@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\DB;
 use \Illuminate\Support\Facades\App;
+use App\User;
 
 define('VPN', '%.vpn.tu-clausthal.de');   //VPN
 define('RZ', '%.rz.tu-clausthal.de');   //RZ & WLAN for TUC
@@ -13,7 +14,7 @@ define('DEFAULT_HOST', [VPN, IFI, RZ]); //default host
  * 
  *
  * @author mstu15
- * @version 13.01.2018
+ * @version 14.01.2018
  */
 
 class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
@@ -33,6 +34,7 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
         DB::statement("CREATE USER '$accName'@'$host' IDENTIFIED BY '$pwd'");
         DB::connection()->statement("FLUSH PRIVILEGES");
     }
+
     /**
      * Drops the Account with set name on host
      * 
@@ -43,8 +45,7 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
     function dropAccount($accName, $host) {
         DB::statement("DROP USER IF EXISTS '$accName'@'$host'");
     }
-    
-    
+
     /**
      * Creates a new Database with set name
      * 
@@ -213,6 +214,7 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
         // dummy
         return 123456;
     }
+
     /**
      * Get the Account names 
      * 
@@ -220,10 +222,10 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
      * 
      * @return array with account names
      */
-    function getAccountNames($accTypePrefix)
-    {
+    function getAccountNames($accTypePrefix) {
         return array_map('reset', DB::select("SELECT DISTINCT user FROM mysql.user WHERE user LIKE 'db_%_$accTypePrefix%' ORDER BY CHAR_LENGTH(user) ASC, user ASC"));
     }
+
     /**
      * Get the Grants for Account on host 
      * 
@@ -232,19 +234,20 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
      * 
      * @return array with grants
      */
-    function getGrants($accName, $hostname)
-    {
-       return array_map('reset', DB::select("SHOW GRANTS FOR '$accName'@'$hostname'"));
+    function getGrants($accName, $hostname) {
+        return array_map('reset', DB::select("SHOW GRANTS FOR '$accName'@'$hostname'"));
     }
+
     /**
      * Get the Hosts
      * 
      * @return array with hosts
      */
-    function getHosts()
-    {
-        return array_map('reset', DB::select("SELECT * FROM dbManagerHosts"));;
+    function getHosts() {
+        return array_map('reset', DB::select("SELECT * FROM dbManagerHosts"));
+        ;
     }
+
     /**
      * Adds a new Host to the host Table
      * 
@@ -252,18 +255,18 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
      * 
      * @return $success 0 if not successful 1 if successfull
      */
-    function addHost($hostName){
+    function addHost($hostName) {
         CustomDatabaseManager::setupHosts();
         $success;
-        try{
+        try {
             // success will be set to the count of altered rows (1) or throw exception because the uniqueness is violated
-            $success = DB::insert("INSERT INTO dbManagerHosts(Host) values (?)",[$hostName]);
+            $success = DB::insert("INSERT INTO dbManagerHosts(Host) values (?)", [$hostName]);
         } catch (PDOException $ex) {
             $success = 0;
         }
         return $success;
     }
-    
+
     /**
      * Removes a Host from the host Table
      * 
@@ -271,25 +274,60 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
      * 
      * @return $success 0 if not successful 1 if successfull
      */
-    function removeHost($hostName){
+    function removeHost($hostName) {
         // success will be set to the count of altered rows 1 if it existed 0 if not
-       $success = DB::delete("DELETE FROM dbManagerHosts WHERE LOWER(Host) = LOWER('$hostName')");
-       return $success;
+        $success = DB::delete("DELETE FROM dbManagerHosts WHERE LOWER(Host) = LOWER('$hostName')");
+        return $success;
     }
+
     /**
      * Adds the host tabel to database if it doesn't exist 
      * 
-     * 
      */
-    function setupHosts(){
+    function setupHosts() {
         // Check if dbManagerHosts table already exists
         $hostCheck = DB::select("SHOW TABLES LIKE 'dbManagerHosts'");
-        if($hostCheck == null){
+        if ($hostCheck == null) {
             DB::statement('CREATE TABLE IF NOT EXISTS dbManagerHosts(Host varchar(60) NOT NULL UNIQUE)');
-            foreach (DEFAULT_HOST as $defaultHost)
-            {
+            foreach (DEFAULT_HOST as $defaultHost) {
                 DB::insert("INSERT INTO dbManagerHosts(Host) values ('$defaultHost')");
             }
         }
     }
+
+    /**
+     * Adds the users tabel to database if it doesn't exist 
+     * 
+     */
+    function setupUsers() {
+        // Check if dbManagerHosts table already exists
+        $usersCheck = DB::select("SHOW TABLES LIKE 'users'");
+        $createTable = false;
+        if ($usersCheck == null) {
+            // Create Table if it not exists
+            $createTable = true;
+        } else {
+            // Check if the table is empty
+            $count = array_map('reset',DB::select("SELECT COUNT(*) FROM users"));
+            if (intval($count[0]) == 0) {
+                // recreate Table if it is empty
+                $createTable = true;
+            }
+        }
+        if ($createTable) {
+            DB::statement("DROP TABLE IF EXISTS users");
+            DB::statement("CREATE TABLE IF NOT EXISTS users(id int(11) AUTO_INCREMENT PRIMARY KEY,"
+                    . "name varchar(32) UNIQUE NOT NULL,"
+                    . "password varchar(64) NOT NULL,"
+                    . "created_at date NOT NULL,"
+                    . "updated_at date NOT NULL,"
+                    . "remember_token varchar(64)"
+                    . ")");
+            User::create([
+                'name' => 'admin',
+                'password' => bcrypt("dummy"),
+            ]);
+        }
+    }
+
 }

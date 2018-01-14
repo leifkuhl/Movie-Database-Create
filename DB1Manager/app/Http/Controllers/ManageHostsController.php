@@ -11,7 +11,7 @@ use CustomDatabaseManager;
  * The controller for the host manager used to add and remove Hosts
  *
  * @author mstu15
- * @version 16.12.2017
+ * @version 14.01.2017
  */
 class ManageHostsController extends Controller{
     
