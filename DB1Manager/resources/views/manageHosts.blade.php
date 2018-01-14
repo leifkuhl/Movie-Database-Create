@@ -13,11 +13,19 @@
                 <div class="panel-heading"><h1>Manage Hosts</h1></div>
                 <div class="panel-body">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a data-toggle="tab" href="#add">Add Host</a></li>
+                        <li class="active"><a data-toggle="tab" href="#list">List Hosts</a></li>
+                        <li><a data-toggle="tab" href="#add">Add Host</a></li>
                         <li><a data-toggle="tab" href="#remove">Remove Host</a></li>
                     </ul>
                     <div class="tab-content">
-                        <div id="add" class="tab-pane fade in active">
+                        <div id="list" class="tab-pane fade in active">
+                            <h3>List Hosts</h3>
+                            @yield('hostList')
+                            <form action="listHosts">
+                                <button type="submit" class="btn btn-primary">List Hosts</button>
+                            </form>
+                        </div>
+                        <div id="add" class="tab-pane fade">
                             <h3>Add Host</h3>
                             <form action="addHost">
                                 <div class="form-group">

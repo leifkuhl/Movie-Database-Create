@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 include '..\app\CustomDatabaseManager.php';
 
 use Illuminate\Http\Request;
+use CustomDatabaseManager;
 
 /**
  * The controller for the host manager used to add and remove Hosts
@@ -28,7 +29,19 @@ class ManageHostsController extends Controller{
     {
         return view('manageHosts');
     }
-    
+    /**
+     * List all Hosts
+     * 
+     * @return view with Hostlist
+     */
+    public function listHosts()
+    {
+        $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
+        
+        $hostNames = $customDBManager->getHosts();
+        
+        return view ('hostList',['tabledata' => $hostNames]);
+    }
     /**
      * Adds a new Host
      * @param request the form data consists of:
@@ -39,9 +52,37 @@ class ManageHostsController extends Controller{
     {
         $hostName = $request->input('hostName');
         
-        $customDBManager = new \CustomDatabaseManager(app(), app('db.factory'));
+        $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
         
-        $customDBManager->replicateMovieDB($hostName);
+        $success = $customDBManager->addHost($hostName);
+        
+        if($success > 0)
+        {
+            // Add Accounts on new Host
+            foreach ($customDBManager->getAccountNames("") as $accName)
+            {
+                // Find position of last "_" to get Account Type (db_SSYY_sx or _tx)
+                // $accType is currently unused
+                $pos = strripos($accName,'_');
+                $accTypePrefix = substr($accName, $pos+1,1);
+                if($accTypePrefix == "s")
+                {
+                    $accType = "Student";
+                }else if($accTypePrefix == "t"){
+                    $accType = "Tutor";
+                }else{
+                    continue;
+                }
+                // Create Account
+                $customDBManager->createAccount($accName,$hostName);
+                // Set Permissions
+                $customDBManager->setPermissions($accName, $accType, $hostName);
+            }
+        }
+        else
+        {
+            return "FAILED TO ADD HOST";
+        }
         
         return $request;
     }
@@ -56,9 +97,21 @@ class ManageHostsController extends Controller{
     {
         $hostName = $request->input('hostName');
         
-        $customDBManager = new \CustomDatabaseManager(app(), app('db.factory'));
+        $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
         
-        $customDBManager->deleteDB($hostName);
+        $success = $customDBManager->removeHost($hostName);
+        if($success > 0)
+        {
+            // Delete Accounts on Host
+            foreach ($customDBManager->getAccountNames("") as $accName)
+            {
+                $customDBManager->dropAccount($accName,$hostName);
+            }
+        }
+        else
+        {
+            return "FAILED TO REMOVE HOST";
+        }
         
         return $request;
     }

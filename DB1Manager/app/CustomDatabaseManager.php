@@ -19,28 +19,32 @@ define('DEFAULT_HOST', [VPN, IFI, RZ]); //default host
 class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
 
     /**
-     * Creates a new Account with set name, replicates the MovieDB and sets permissions 
+     * Creates a new Account with set name on host
      * 
      * @param $accName Name of the Account to create
+     * @param $host host for the account
+     * 
      */
-    function createAccount($accName, $accType, $hosts = DEFAULT_HOST) {
-        // Replicates MovieDB
-        CustomDatabaseManager::replicateMovieDB($accName . '_movieDB');
-        // Creates TestDB
-        CustomDatabaseManager::createDB($accName . '_testDB');
+    function createAccount($accName, $host) {
         // Gets the Default Password for the user
         $pwd = CustomDatabaseManager::getDefaultPwd($accName);
-        foreach ($hosts as $host) {
-            // Creates the User for every host
-            DB::statement("DROP USER IF EXISTS '$accName'@'$host'");
-            DB::connection()->statement("FLUSH PRIVILEGES");
-            DB::statement("CREATE USER '$accName'@'$host' IDENTIFIED BY '$pwd'");
-            DB::connection()->statement("FLUSH PRIVILEGES");
-            // Sets Permissions
-            CustomDatabaseManager::setPermissions($accName, $accType, $host);
-        }
+        DB::statement("DROP USER IF EXISTS '$accName'@'$host'");
+        DB::connection()->statement("FLUSH PRIVILEGES");
+        DB::statement("CREATE USER '$accName'@'$host' IDENTIFIED BY '$pwd'");
+        DB::connection()->statement("FLUSH PRIVILEGES");
     }
-
+    /**
+     * Drops the Account with set name on host
+     * 
+     * @param $accName Name of the Account to create
+     * @param $host host for the account
+     * 
+     */
+    function dropAccount($accName, $host) {
+        DB::statement("DROP USER IF EXISTS '$accName'@'$host'");
+    }
+    
+    
     /**
      * Creates a new Database with set name
      * 
@@ -206,7 +210,7 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
      * @return default password
      */
     function getDefaultPwd($accName) {
-       // dummy
+        // dummy
         return 123456;
     }
     /**
@@ -239,6 +243,53 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
      */
     function getHosts()
     {
-        return DEFAULT_HOST;
+        return array_map('reset', DB::select("SELECT * FROM dbManagerHosts"));;
+    }
+    /**
+     * Adds a new Host to the host Table
+     * 
+     * $hostName Hostname from the new Host
+     * 
+     * @return $success 0 if not successful 1 if successfull
+     */
+    function addHost($hostName){
+        CustomDatabaseManager::setupHosts();
+        $success;
+        try{
+            // success will be set to the count of altered rows (1) or throw exception because the uniqueness is violated
+            $success = DB::insert("INSERT INTO dbManagerHosts(Host) values (?)",[$hostName]);
+        } catch (PDOException $ex) {
+            $success = 0;
+        }
+        return $success;
+    }
+    
+    /**
+     * Removes a Host from the host Table
+     * 
+     * $hostName Hostname from the new Host
+     * 
+     * @return $success 0 if not successful 1 if successfull
+     */
+    function removeHost($hostName){
+        // success will be set to the count of altered rows 1 if it existed 0 if not
+       $success = DB::delete("DELETE FROM dbManagerHosts WHERE LOWER(Host) = LOWER('$hostName')");
+       return $success;
+    }
+    /**
+     * Adds the host tabel to database if it doesn't exist 
+     * 
+     * 
+     */
+    function setupHosts(){
+        // Check if dbManagerHosts table already exists
+        $hostCheck = DB::select("SHOW TABLES LIKE 'dbManagerHosts'");
+        if($hostCheck == null){
+            DB::statement('CREATE TABLE IF NOT EXISTS dbManagerHosts(Host varchar(60) NOT NULL UNIQUE)');
+            foreach (DEFAULT_HOST as $defaultHost)
+            {
+                DB::insert("INSERT INTO dbManagerHosts(Host) values ('$defaultHost')");
+            }
+        }
     }
 }

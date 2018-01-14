@@ -49,7 +49,7 @@ class ManageAccountsController extends Controller {
         $accTypePrefix;
 
 
-        /*         * * * *
+        /* * * * *
          * Setup *
          * * * * */
 
@@ -84,24 +84,27 @@ class ManageAccountsController extends Controller {
             $startIndex = $customDBManager->getMaxDBNumber($prefix);
             $startIndex += 1;
         }
-
-        /*         * * * * * * * * * * * *
-         * Create the Databases  *
-         * * * * * * * * * * * * *
-
-          for($i = $startIndex; $i < $count + $startIndex; $i++)
-          {
-          $dbName = $prefix.$i;
-          $customDBManager->replicateMovieDB($dbName);
-          } */
-
-        /*         * * * * * * * * * * *
+        
+        // Get the Hosts
+        
+        $hosts = $customDBManager->getHosts();
+        
+        /* * * * * * * * * * * *
          * Create the Accounts *
          * * * * * * * * * * * */
 
         for ($i = $startIndex; $i < $count + $startIndex; $i++) {
             $accName = $prefix . $i;
-            $customDBManager->createAccount($accName, $accType);
+            
+            // Replicates MovieDB
+            $customDBManager->replicateMovieDB($accName . '_movieDB');
+            // Creates TestDB
+            $customDBManager->createDB($accName . '_testDB');
+            foreach ($hosts as $host) {
+                $customDBManager->createAccount($accName, $host);
+                // Sets Permissions
+                $customDBManager->setPermissions($accName, $accType, $host);
+            }
         }
 
 

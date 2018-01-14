@@ -26,6 +26,7 @@ Route::get('/generateLoginList',  'ManageAccountsController@generateLoginList');
 Route::get('/resetPassword',  'ManageAccountsController@resetPassword');
 
 Route::get('/manageHosts', 'ManageHostsController@index')->name('manageHosts');
+Route::get('/listHosts', 'ManageHostsController@listHosts');
 Route::get('/addHost', 'ManageHostsController@addHost');
 Route::get('/removeHost', 'ManageHostsController@removeHost');
 
