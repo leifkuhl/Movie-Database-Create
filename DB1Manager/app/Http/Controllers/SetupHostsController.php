@@ -11,7 +11,7 @@ use CustomDatabaseManager;
  * The controller for hosts setup to create the host table and the default host
  *
  * @author mstu15
- * @version 13.01.2018
+ * @version 14.01.2018
  */
 class SetupHostsController extends Controller{
     /**

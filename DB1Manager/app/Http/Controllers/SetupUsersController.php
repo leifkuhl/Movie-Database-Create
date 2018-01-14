@@ -11,7 +11,7 @@ use CustomDatabaseManager;
  * The controller for users setup to create the users table and the default user
  *
  * @author mstu15
- * @version 13.01.2018
+ * @version 14.01.2018
  */
 class SetupUsersController extends Controller{
     /**

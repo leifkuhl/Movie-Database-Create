@@ -53,7 +53,7 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
      */
     function createDB($db_name) {
 
-        CustomDatabaseManager::deleteDB($db_name);
+        CustomDatabaseManager::dropDB($db_name);
         DB::connection()->statement("CREATE DATABASE IF NOT EXISTS $db_name");
     }
 
@@ -62,8 +62,7 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
      * 
      * @param $db_name Name of the Database to delete
      */
-    function deleteDB($db_name) {
-
+    function dropDB($db_name) {
         DB::connection()->statement("DROP DATABASE IF EXISTS $db_name");
     }
 
