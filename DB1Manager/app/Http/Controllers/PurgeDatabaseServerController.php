@@ -12,7 +12,7 @@ use CustomDatabaseManager;
  * The controller for the showGrants to show Grants
  *
  * @author mstu15
- * @version 16.12.2017
+ * @version 14.01.2017
  */
 class PurgeDatabaseServerController extends Controller {
 
