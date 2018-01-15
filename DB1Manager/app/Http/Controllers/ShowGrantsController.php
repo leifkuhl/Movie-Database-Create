@@ -56,10 +56,10 @@ class ShowGrantsController extends Controller {
             $accNames = $customDBManager->getAccountNames($accTypePrefix);
 
             // The Collumns for the html table
-            $userCollumn;
-            $hostCollumn;
-            $databaseCollumn;
-            $privilegesCollumn;
+            $userCollumn = [];
+            $hostCollumn = [];
+            $databaseCollumn = [];
+            $privilegesCollumn = [];
 
 
             $rowIndex = 0;
