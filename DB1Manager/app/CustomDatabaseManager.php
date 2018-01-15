@@ -14,7 +14,7 @@ define('DEFAULT_HOST', [VPN, IFI, RZ]); //default host
  * 
  *
  * @author mstu15
- * @version 14.01.2018
+ * @version 15.01.2018
  */
 
 class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
@@ -71,15 +71,23 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
      * 
      * @param $user the given user
      * @param $pwd the new password
+     * 
+     * @return true if successfully changed or false if not
      */
     function setPwd($accName, $pwd) {
-
-
-        DB::connection()->statement("UPDATE mysql.user SET Password = PASSWORD('$pwd')
-		WHERE LOWER(USER)=LOWER('$accName')");
+        
+        // $updatedValue will be set to the number of affected rows
+        $updatedValue = intval(DB::connection()->update("UPDATE mysql.user SET Password = PASSWORD('$pwd')
+		WHERE LOWER(USER)=LOWER('$accName')"));
         DB::connection()->statement("FLUSH PRIVILEGES");
-
-        //return "Update password for $user.";
+        // When no rows were updated
+        if($updatedValue == 0){
+            return false;
+        }else{
+            return true;
+        }
+        
+        
     }
 
     /**
@@ -222,7 +230,14 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
      * @return array with account names
      */
     function getAccountNames($accTypePrefix) {
-        return array_map('reset', DB::select("SELECT DISTINCT user FROM mysql.user WHERE user LIKE 'db_%_$accTypePrefix%' ORDER BY CHAR_LENGTH(user) ASC, user ASC"));
+        $databaseNames = array_map('reset', DB::select("SHOW DATABASES LIKE 'db_%_$accTypePrefix%_movieDB'"));
+        $accNames = [];
+        foreach($databaseNames as $index => $databaseName)
+        {
+            $accNames[$index] = str_replace("_moviedb", "", $databaseName);
+        }
+        return $accNames;
+        
     }
 
     /**
@@ -291,12 +306,16 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
             foreach (DEFAULT_HOST as $defaultHost) {
                 DB::insert("INSERT INTO dbManagerHosts(Host) values ('$defaultHost')");
             }
+            return true;
+        }else{
+            return false;
         }
     }
 
     /**
      * Adds the users tabel to database if it doesn't exist 
      * 
+     * @return true if created false if not;
      */
     function setupUsers() {
         // Check if dbManagerHosts table already exists
@@ -327,6 +346,7 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
                 'password' => bcrypt("dummy"),
             ]);
         }
+        return $createTable;
     }
 
 }

@@ -6,12 +6,13 @@ include '..\app\CustomDatabaseManager.php';
 
 use Illuminate\Http\Request;
 use CustomDatabaseManager;
+use Exception;
 
 /**
  * The controller for the showGrants to show Grants
  *
  * @author mstu15
- * @version 13.01.2018
+ * @version 15.01.2018
  */
 class ShowGrantsController extends Controller {
 
@@ -33,50 +34,76 @@ class ShowGrantsController extends Controller {
      * @param request the form data consists of:
      *      accType all, student or tutor accounts
      *      hostName the name from the host
-     * @return new view with Grant List
+     * @return new view with Grant List or Failure
      */
     public function showGrants(Request $request) {
-        $accType = $request->input('accType');
-        $hostName = $request->input('hostName');
+        try {
+            $accType = $request->input('accType');
+            $hostName = $request->input('hostName');
 
-        $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
+            $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
 
-        $accTypePrefix;
+            $accTypePrefix;
 
-        // Sets the accTypePrefix
-        if (strcasecmp("Tutor", $accType) == 0) {
-            $accTypePrefix = "t";
-        } else if (strcasecmp("Student", $accType) == 0) {
-            $accTypePrefix = "s";
-        } else {
-            $accTypePrefix = "";
-        }
-        $accNames = $customDBManager->getAccountNames($accTypePrefix);
+            // Sets the accTypePrefix
+            if (strcasecmp("Tutor", $accType) == 0) {
+                $accTypePrefix = "t";
+            } else if (strcasecmp("Student", $accType) == 0) {
+                $accTypePrefix = "s";
+            } else {
+                $accTypePrefix = "";
+            }
+            $accNames = $customDBManager->getAccountNames($accTypePrefix);
 
-        // The Collumns for the html table
-        $userCollumn;
-        $hostCollumn;
-        $databaseCollumn;
-        $privilegesCollumn;
+            // The Collumns for the html table
+            $userCollumn;
+            $hostCollumn;
+            $databaseCollumn;
+            $privilegesCollumn;
 
 
-        $rowIndex = 0;
+            $rowIndex = 0;
 
-        // When no hostname provided get grants from all hosts  
-        if ($hostName == null) {
-            $hosts = $customDBManager->getHosts();
-            foreach ($accNames as $accName) {
-                foreach ($hosts as $host) {
-                    $grants = $customDBManager->getGrants($accName, $host);
-                    /*
-                     * Decode Grants
-                     * Grants have the Form:
-                     * 
-                     * GRANT {PRIVILEGES} ON {DATABASE} TO USER
-                     * 
-                     */
+            // When no hostname provided get grants from all hosts  
+            if ($hostName == null) {
+                $hosts = $customDBManager->getHosts();
+                foreach ($accNames as $accName) {
+                    foreach ($hosts as $host) {
+                        $grants = $customDBManager->getGrants($accName, $host);
+                        /*
+                         * Decode Grants
+                         * Grants have the Form:
+                         * 
+                         * GRANT {PRIVILEGES} ON {DATABASE} TO USER
+                         * 
+                         */
+                        foreach ($grants as $grant) {
+
+                            // Remove The Starting "GRANT "
+                            $grant = substr($grant, 6);
+                            // Find end of privileges by finding the " ON "
+                            $endIndex = strpos($grant, " ON ");
+                            // get the privileges with strlengt = $endIndex;
+                            $privileges = substr($grant, 0, $endIndex);
+                            // remove the Privileges and the " ON "(+4)
+                            $grant = substr($grant, $endIndex + 4);
+                            // Find end of Database by finding the " TO "
+                            $endIndex = strpos($grant, " TO ");
+                            // get the database with strlengt = $endIndex;
+                            $database = substr($grant, 0, $endIndex);
+
+                            $userCollumn[$rowIndex] = $accName;
+                            $hostCollumn[$rowIndex] = $host;
+                            $databaseCollumn[$rowIndex] = $database;
+                            $privilegesCollumn[$rowIndex] = $privileges;
+                            $rowIndex++;
+                        }
+                    }
+                }
+            } else {
+                foreach ($accNames as $accName) {
+                    $grants = $customDBManager->getGrants($accName, $hostName);
                     foreach ($grants as $grant) {
-
                         // Remove The Starting "GRANT "
                         $grant = substr($grant, 6);
                         // Find end of privileges by finding the " ON "
@@ -91,40 +118,21 @@ class ShowGrantsController extends Controller {
                         $database = substr($grant, 0, $endIndex);
 
                         $userCollumn[$rowIndex] = $accName;
-                        $hostCollumn[$rowIndex] = $host;
+                        $hostCollumn[$rowIndex] = $hostName;
                         $databaseCollumn[$rowIndex] = $database;
                         $privilegesCollumn[$rowIndex] = $privileges;
                         $rowIndex++;
                     }
                 }
             }
-        } else {
-            foreach ($accNames as $accName) {
-                $grants = $customDBManager->getGrants($accName, $hostName);
-                foreach ($grants as $grant) {
-                    // Remove The Starting "GRANT "
-                    $grant = substr($grant, 6);
-                    // Find end of privileges by finding the " ON "
-                    $endIndex = strpos($grant, " ON ");
-                    // get the privileges with strlengt = $endIndex;
-                    $privileges = substr($grant, 0, $endIndex);
-                    // remove the Privileges and the " ON "(+4)
-                    $grant = substr($grant, $endIndex + 4);
-                    // Find end of Database by finding the " TO "
-                    $endIndex = strpos($grant, " TO ");
-                    // get the database with strlengt = $endIndex;
-                    $database = substr($grant, 0, $endIndex);
 
-                    $userCollumn[$rowIndex] = $accName;
-                    $hostCollumn[$rowIndex] = $hostName;
-                    $databaseCollumn[$rowIndex] = $database;
-                    $privilegesCollumn[$rowIndex] = $privileges;
-                    $rowIndex++;
-                }
-            }
+            return view('grantList', ['users' => $userCollumn, 'hosts' => $hostCollumn, 'databases' => $databaseCollumn, 'privileges' => $privilegesCollumn]);
+        } catch (Exception $ex) {
+            $line = $ex->getLine();
+            $message = $ex->getMessage();
+            $fileName = $ex->getFile();
+            return view('failure', ['operation' => 'Show Grants', 'pointOfFailure' => "$fileName Line: $line", 'message' => "$message"]);
         }
-
-        return view('grantList',['users' => $userCollumn, 'hosts' => $hostCollumn, 'databases' => $databaseCollumn, 'privileges' => $privilegesCollumn]);
     }
 
 }

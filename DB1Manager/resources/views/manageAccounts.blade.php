@@ -41,18 +41,18 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="semesterType"><strong><font color="#d9534f">Year</font></strong> (e.g. 17 for SS 2017 and 1718 for WS 2017/18):</label>
+                                    <label for="semesterType"><strong><font color="#d9534f">Year</font></strong> (e.g. 17 for SS 2017 and 1718 for WS 2017/18) (can be left blanc to be autofilled with current year):</label>
                                     <input type="text" class="form-control" id="semesterYear" name="semesterYear">     
                                 </div>
                                 <div class="form-group">
-                                    <label for="startIndex">Start <strong><font color="#5bc0de">index</font></strong>:</label>
+                                    <label for="startIndex">Start <strong><font color="#5bc0de">index</font></strong> (can be left blanc to continue from the highest index):</label>
                                     <input type="text" class="form-control" id="startIndex" name="startIndex">     
                                 </div>
                                 <div class="form-group">
                                     <label for="count">Number of accounts</label>
                                     <input type="text" class="form-control" id="count" name="count">     
                                 </div>
-                                <button type="submit" class="btn btn-primary">Create Accounts</button>
+                                <button type="submit" class="btn btn-primary">Create Accounts:</button>
                             </form>
                         </div>
                         <div id="list" class="tab-pane fade">

@@ -7,11 +7,13 @@ include '..\app\CustomDatabaseManager.php';
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use CustomDatabaseManager;
+
+use Exception;
 /**
  * The controller for users setup to create the users table and the default user
  *
  * @author mstu15
- * @version 14.01.2018
+ * @version 15.01.2018
  */
 class SetupUsersController extends Controller{
     /**
@@ -32,12 +34,32 @@ class SetupUsersController extends Controller{
     {
         return view('setupUsers');
     }
+    /**
+     * Sets the Users table up
+     *
+     * @return redirect to setupHosts or Failure
+     */
     public function setupUsers() {
+        try{
         $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
         
-        $customDBManager->setupUsers();
+        $success = $customDBManager->setupUsers();
+        if($success)
+        {
+                   return redirect('setupHosts'); 
+        }else{
+            return view('failure', ['operation' => 'Setup Users', 'pointOfFailure' => "Setup Users Table", 'message' => "Table already exists and is not empty."]);
         
-        return redirect('setupHosts');
+        }
+        
+
+        }
+        catch (Exception $ex) {
+            $line = $ex->getLine();
+            $message = $ex->getMessage();
+            $fileName = $ex->getFile();
+            return view('failure', ['operation' => 'Setup Users', 'pointOfFailure' => "$fileName Line: $line", 'message' => "$message"]);
+        }
     }
     
 }
