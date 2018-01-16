@@ -12,7 +12,7 @@ use Exception;
  * The controller for the showGrants to show Grants
  *
  * @author mstu15
- * @version 15.01.2018
+ * @version 16.01.2018
  */
 class ShowGrantsController extends Controller {
 
@@ -53,7 +53,6 @@ class ShowGrantsController extends Controller {
             } else {
                 $accTypePrefix = "";
             }
-            $accNames = $customDBManager->getAccountNames($accTypePrefix);
 
             // The Collumns for the html table
             $userCollumn = [];
@@ -61,46 +60,49 @@ class ShowGrantsController extends Controller {
             $databaseCollumn = [];
             $privilegesCollumn = [];
 
-
             $rowIndex = 0;
-
+            
+            // Get account and host names
+            $names = $customDBManager->getAccountNamesAndHosts($accTypePrefix);
+            $accNames = $names[0];
+            $hostNames = $names[1];
+            
             // When no hostname provided get grants from all hosts  
             if ($hostName == null) {
-                $hosts = $customDBManager->getHosts();
-                foreach ($accNames as $accName) {
-                    foreach ($hosts as $host) {
-                        $grants = $customDBManager->getGrants($accName, $host);
-                        /*
-                         * Decode Grants
-                         * Grants have the Form:
-                         * 
-                         * GRANT {PRIVILEGES} ON {DATABASE} TO USER
-                         * 
-                         */
-                        foreach ($grants as $grant) {
+                foreach ($accNames as $index => $accName) {
+                    $grants = $customDBManager->getGrants($accName, "$hostNames[$index]");
+                    /*
+                     * Decode Grants
+                     * Grants have the Form:
+                     * 
+                     * GRANT {PRIVILEGES} ON {DATABASE} TO USER
+                     * 
+                     */
+                    foreach ($grants as $grant) {
 
-                            // Remove The Starting "GRANT "
-                            $grant = substr($grant, 6);
-                            // Find end of privileges by finding the " ON "
-                            $endIndex = strpos($grant, " ON ");
-                            // get the privileges with strlengt = $endIndex;
-                            $privileges = substr($grant, 0, $endIndex);
-                            // remove the Privileges and the " ON "(+4)
-                            $grant = substr($grant, $endIndex + 4);
-                            // Find end of Database by finding the " TO "
-                            $endIndex = strpos($grant, " TO ");
-                            // get the database with strlengt = $endIndex;
-                            $database = substr($grant, 0, $endIndex);
+                        // Remove The Starting "GRANT "
+                        $grant = substr($grant, 6);
+                        // Find end of privileges by finding the " ON "
+                        $endIndex = strpos($grant, " ON ");
+                        // get the privileges with strlengt = $endIndex;
+                        $privileges = substr($grant, 0, $endIndex);
+                        // remove the Privileges and the " ON "(+4)
+                        $grant = substr($grant, $endIndex + 4);
+                        // Find end of Database by finding the " TO "
+                        $endIndex = strpos($grant, " TO ");
+                        // get the database with strlengt = $endIndex;
+                        $database = substr($grant, 0, $endIndex);
 
-                            $userCollumn[$rowIndex] = $accName;
-                            $hostCollumn[$rowIndex] = $host;
-                            $databaseCollumn[$rowIndex] = $database;
-                            $privilegesCollumn[$rowIndex] = $privileges;
-                            $rowIndex++;
-                        }
+                        $userCollumn[$rowIndex] = $accName;
+                        $hostCollumn[$rowIndex] = $hostNames[$index];
+                        $databaseCollumn[$rowIndex] = $database;
+                        $privilegesCollumn[$rowIndex] = $privileges;
+                        $rowIndex++;
                     }
                 }
             } else {
+                // remove duplicants from $accNames
+                $accNames = array_unique($names[0]);
                 foreach ($accNames as $accName) {
                     $grants = $customDBManager->getGrants($accName, $hostName);
                     foreach ($grants as $grant) {

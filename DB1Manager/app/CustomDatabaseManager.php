@@ -14,7 +14,7 @@ define('DEFAULT_HOST', [VPN, IFI, RZ]); //default host
  * 
  *
  * @author mstu15
- * @version 15.01.2018
+ * @version 16.01.2018
  */
 
 class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
@@ -223,21 +223,61 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
     }
 
     /**
-     * Get the Account names 
+     * Get the Account names by searching for databases
+     * 
+     * the getAccountNamesAndHosts fuction does not require accounts to have
+     * databases to exist. The getAccountNames function just returns account
+     * names when the database exists but does not require for an account to
+     * exist on any Host. 
      * 
      * @param $accTypePrefix student tutor or all accounts
      * 
      * @return array with account names
      */
     function getAccountNames($accTypePrefix) {
-        $databaseNames = array_map('reset', DB::select("SHOW DATABASES LIKE 'db_%_$accTypePrefix%_movieDB'"));
+        $databaseNames = array_map('reset', DB::select("SHOW DATABASES LIKE 'db_%_$accTypePrefix%'"));
         $accNames = [];
         foreach($databaseNames as $index => $databaseName)
         {
-            $accNames[$index] = str_replace("_moviedb", "", $databaseName);
+            $databaseNameCopy = $databaseName;
+            // Remove _moviedb or _testdb suffixes
+            $databaseNameCopy = str_replace("_moviedb", "", $databaseNameCopy);
+            $databaseNameCopy = str_replace("_testdb", "", $databaseNameCopy);
+            
+            $accNames[$index] = $databaseNameCopy;
         }
+        // Remove duplicates
+        $accNames = array_unique($accNames);
+        // Sort the array
+        asort($accNames);
+        array_multisort(array_map('strlen', $accNames), $accNames);
         return $accNames;
         
+    }
+
+    /**
+     * Get the account names connected and hosts by searching in the users table
+     * 
+     * the getAccountNamesAndHosts fuction does not require accounts to have
+     * databases to exist. The getAccountNames function just returns account
+     * names when the database exists but does not require for an account to
+     * exist on any Host. 
+     * @param $accTypePrefix student tutor or all accounts
+     * 
+     * @return array with account names and corresponding hosts
+     */
+    function getAccountNamesAndHosts($accTypePrefix) {
+        $names = (DB::select("SELECT user,host FROM mysql.user WHERE user LIKE 'db_%_$accTypePrefix%' ORDER BY CHAR_LENGTH(user) ASC, user ASC"));
+        $accNames = [];
+        $hostNames = [];
+        foreach($names as $index => $name)
+        {
+            $accNames[$index]= $names[$index]->user;
+            $hostNames[$index] = $names[$index]->host;
+            
+        }
+        
+        return [$accNames, $hostNames];
     }
 
     /**

@@ -14,7 +14,7 @@ use Exception;
  * generate the login list and reset passwords
  *
  * @author mstu15
- * @version 15.01.2018
+ * @version 16.01.2018
  */
 class ManageAccountsController extends Controller {
 
@@ -129,7 +129,7 @@ class ManageAccountsController extends Controller {
         try {
             $accType = $request->input('accType');
             $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
-
+            
             $accTypePrefix;
 
             // Sets the accTypePrefix
@@ -140,10 +140,12 @@ class ManageAccountsController extends Controller {
             } else {
                 $accTypePrefix = "";
             }
-
-            $accNames = $customDBManager->getAccountNames($accTypePrefix);
-
-            return view('accountList', ['tabledata' => $accNames]);
+            
+            $names = $customDBManager->getAccountNamesAndHosts($accTypePrefix);
+            $accNames = $names[0];
+            $hostNames = $names[1];
+            
+            return view('accountList', ['tabledataAccNames' => $accNames, 'tabledataHostNames' => $hostNames]);
         } catch (Exception $ex) {
             $line = $ex->getLine();
             $message = $ex->getMessage();
@@ -173,7 +175,13 @@ class ManageAccountsController extends Controller {
             } else {
                 $accTypePrefix = "";
             }
-            $accNames = $customDBManager->getAccountNames($accTypePrefix);
+            // Get Names from all existing accounts
+            $names = $customDBManager->getAccountNamesAndHosts($accTypePrefix);
+            $accNames = $names[0];
+            
+            // remove duplicants from $accNames
+            $accNames = array_unique($names[0]);
+                
             $passwords = [];
 
             foreach ($accNames as $accName) {

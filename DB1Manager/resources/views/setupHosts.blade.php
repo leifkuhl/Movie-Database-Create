@@ -15,7 +15,6 @@
                     <div class="tab-content">
                         <div id="setupHosts">
                             <h4>Setup the host table and adds the default hosts.<br>
-                                Afterwards you are redirected to the home.<br>
                             </h4>
                             <form action="setupDefaultHosts">
                                 <button type="submit" class="btn btn-primary">Setup</button>

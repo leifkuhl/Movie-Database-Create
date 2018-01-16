@@ -61,11 +61,12 @@
                                 <thead>
                                     <tr>
                                         <th>Account Name</th>
+                                        <th>Host Name</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($tabledata as $line): ?>
-                                        <tr><td><?php echo $line; ?></td></tr>
+                                    <?php foreach ($tabledataAccNames as $index => $line): ?>
+                                        <tr><td><?php echo $line?></td><td><?php echo $tabledataHostNames[$index]; ?></td></tr>
                                     <?php endforeach; ?>
                                     </div>
                                 </tbody>
