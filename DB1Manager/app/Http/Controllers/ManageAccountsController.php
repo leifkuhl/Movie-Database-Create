@@ -14,7 +14,7 @@ use Exception;
  * generate the login list and reset passwords
  *
  * @author mstu15
- * @version 16.01.2018
+ * @version 20.01.2018
  */
 class ManageAccountsController extends Controller {
 
@@ -28,7 +28,9 @@ class ManageAccountsController extends Controller {
      * @return manageAccounts view
      */
     public function index() {
-        return view('manageAccounts');
+        $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
+
+        return view('manageAccounts', ['accounts' => $customDBManager->getAccountNames("")]);
     }
 
     /**
@@ -51,12 +53,16 @@ class ManageAccountsController extends Controller {
             $startIndex = $request->input('startIndex');
             $accTypePrefix;
 
-
-            /*             * * * *
+            /* * * * *
              * Setup *
              * * * * */
 
             $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
+
+
+            if ($count <= 0) {
+                return view('failure', ['operation' => 'Create Accounts', 'pointOfFailure' => "Validating Inputs", 'message' => "Number of accounts: \"$count\" is 0 or less or not a Number"]);
+            }
 
             // Checks if the semesterYear was left empty and fills it if that was the case
             if ($semesterYear == null) {
@@ -86,6 +92,8 @@ class ManageAccountsController extends Controller {
             if ($startIndex == null) {
                 $startIndex = $customDBManager->getMaxDBNumber($prefix);
                 $startIndex += 1;
+            } else if ($startIndex <= 0) {
+                return view('failure', ['operation' => 'Create Accounts', 'pointOfFailure' => "Validating Inputs", 'message' => "Start index: \"$startIndex\" is 0 or less or not a Number"]);
             }
 
             // Get the Hosts
@@ -110,12 +118,67 @@ class ManageAccountsController extends Controller {
                 }
                 $addedCount++;
             }
-            return view('success', ['operation' => 'Create Accounts', 'message' => "Created: \"$addedCount\" from \"$count\" accounts."]);
+            $highestAccountIndex = $startIndex + $addedCount - 1;
+            $currentAccountCount = count($customDBManager->getAccountNames($accTypePrefix));
+            return view('success', ['operation' => 'Create Accounts', 'message' => "Created: \"$addedCount\" from \"$count\" accounts.\nAccount prefix: \"$prefix\"\nTotal number of accounts: \"$currentAccountCount\"\nHighest index of an account: \"$highestAccountIndex\""]);
         } catch (Exception $ex) {
             $line = $ex->getLine();
             $message = $ex->getMessage();
             $fileName = $ex->getFile();
             return view('failure', ['operation' => 'Create Accounts', 'pointOfFailure' => "$fileName Line: $line", 'message' => "Created $addedCount accounts. Exception message: $message"]);
+        }
+    }
+
+    /**
+     * Delete accounts
+     * @param request the form data consists of:
+     *      accType student or tutor accounts,
+     *      count number of accounts to create,
+     *      semesterType summer or winter semester,
+     *      semesterYear Year (e.g. for 2017/18: 1718, for 2018: 18)
+     *      startIndex the starting account index
+     * @return Success or Failure
+     */
+    public function deleteAccounts(Request $request) {
+        $deletedCount = 0;
+        try {
+            $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
+
+            // Get account and host names
+            $names = $customDBManager->getAccountNamesAndHosts("");
+            $accNames = $names[0];
+            $hostNames = $names[1];
+            
+            // get unique Account Names
+            $uniqueAccNames = $customDBManager->getAccountNames("");
+            
+            
+            $maxNames = count($uniqueAccNames);
+
+            for ($i = 0; $i < $maxNames; $i++) {
+                $input = $request->input($uniqueAccNames[$i]);
+                // input is null if checkbox is not checked otherwise it is "on"
+                if ($input == null) {
+                    continue;
+                } else {
+                    // Drop Dbs
+                    $customDBManager->dropDB($uniqueAccNames[$i] . "_testDB");
+                    $customDBManager->dropDB($uniqueAccNames[$i] . "_movieDB");
+                    foreach ($accNames as $index => $accName) {
+                        if (strcasecmp($uniqueAccNames[$i], $accName) == 0) {
+                            // Drop account on its host
+                            $customDBManager->dropAccount($accName, $hostNames[$index]);
+                        }
+                    }
+                    $deletedCount++;
+                }
+            }
+            return view('success', ['operation' => 'Delete Accounts', 'message' => "Deleted: \"$deletedCount\" from \"$deletedCount\" accounts"]);
+        } catch (Exception $ex) {
+            $line = $ex->getLine();
+            $message = $ex->getMessage();
+            $fileName = $ex->getFile();
+            return view('failure', ['operation' => 'Delete Accounts', 'pointOfFailure' => "$fileName Line: $line", 'message' => "Deleted $deletedCount accounts. Exception message: $message"]);
         }
     }
 
@@ -129,7 +192,7 @@ class ManageAccountsController extends Controller {
         try {
             $accType = $request->input('accType');
             $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
-            
+
             $accTypePrefix;
 
             // Sets the accTypePrefix
@@ -140,12 +203,12 @@ class ManageAccountsController extends Controller {
             } else {
                 $accTypePrefix = "";
             }
-            
+
             $names = $customDBManager->getAccountNamesAndHosts($accTypePrefix);
             $accNames = $names[0];
             $hostNames = $names[1];
-            
-            return view('accountList', ['tabledataAccNames' => $accNames, 'tabledataHostNames' => $hostNames]);
+
+            return view('accountList', ['tabledataAccNames' => $accNames, 'tabledataHostNames' => $hostNames, 'accounts' => $customDBManager->getAccountNames("")]);
         } catch (Exception $ex) {
             $line = $ex->getLine();
             $message = $ex->getMessage();
@@ -178,16 +241,16 @@ class ManageAccountsController extends Controller {
             // Get Names from all existing accounts
             $names = $customDBManager->getAccountNamesAndHosts($accTypePrefix);
             $accNames = $names[0];
-            
+
             // remove duplicants from $accNames
             $accNames = array_unique($names[0]);
-                
+
             $passwords = [];
 
             foreach ($accNames as $accName) {
                 $passwords[$accName] = $customDBManager->getDefaultPwd($accName);
             }
-            return view('loginList', ['tabledata' => $passwords]);
+            return view('loginList', ['tabledata' => $passwords, 'accounts' => $customDBManager->getAccountNames("")]);
         } catch (Exception $ex) {
             $line = $ex->getLine();
             $message = $ex->getMessage();

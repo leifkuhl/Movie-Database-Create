@@ -12,7 +12,7 @@ use Exception;
  * The controller for the host manager used to add and remove Hosts
  *
  * @author mstu15
- * @version 15.01.2017
+ * @version 20.01.2017
  */
 class ManageHostsController extends Controller {
 
@@ -60,7 +60,7 @@ class ManageHostsController extends Controller {
             $hostName = $request->input('hostName');
             
             if(strlen($hostName) == 0){
-                return view('failure', ['operation' => 'Add Host', 'pointOfFailure' => "Set Host Name", 'message' => "Host name is empty."]);
+                return view('failure', ['operation' => 'Add Host', 'pointOfFailure' => "Validating Inputs", 'message' => "Host name is empty."]);
             }
             
             $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
@@ -110,7 +110,7 @@ class ManageHostsController extends Controller {
         try {
             $hostName = $request->input('hostName');
             if(strlen($hostName) == 0){
-                return view('failure', ['operation' => 'Remove Host', 'pointOfFailure' => "Set Host Name", 'message' => "Host name is empty."]);
+                return view('failure', ['operation' => 'Remove Host', 'pointOfFailure' => "SValidating Inputs", 'message' => "Host name is empty."]);
             }
             
             $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));

@@ -87,7 +87,7 @@ class PurgeDatabaseServerController extends Controller {
                 
                 return view('success', ['operation' => 'Purge Database Server', 'message' => 'Purged Database Server.']);
             } else {
-                return view('failure', ['operation' => 'Purge Database Server', 'pointOfFailure' => 'Sure Check', 'message' => 'Checkbox was not ticked.']);
+                return view('failure', ['operation' => 'Purge Database Server', 'pointOfFailure' => 'Validating Inputs', 'message' => 'Checkbox was not ticked.']);
             }
         } catch (Exception $ex) {
             $line = $ex->getLine();

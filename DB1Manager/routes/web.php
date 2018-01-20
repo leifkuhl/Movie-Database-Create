@@ -27,6 +27,7 @@ Route::get('/setupDefaultHosts',  'SetupHostsController@setupHosts');
 
 Route::get('/manageAccounts',  'ManageAccountsController@index')->name('manageAccounts');
 Route::get('/createAccounts',  'ManageAccountsController@createAccounts');
+Route::get('/deleteAccounts',  'ManageAccountsController@deleteAccounts');
 Route::get('/listAccounts',  'ManageAccountsController@listAccounts');
 Route::get('/generateLoginList',  'ManageAccountsController@generateLoginList');
 Route::get('/resetPassword',  'ManageAccountsController@resetPassword');

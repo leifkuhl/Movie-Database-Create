@@ -15,7 +15,9 @@
                 <div class="panel-body">
                     <h4>Operation: "{{$operation}}" failed at: "{{$pointOfFailure}}":</h4><br> 
                     <div class="well">
-                        <p>{{$message}}<br></p>
+                        <?php
+                            echo nl2br($message);
+                        ?>
                     </div>
                 </div>
             </div>
