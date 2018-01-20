@@ -13,7 +13,7 @@ use Exception;
  * The controller for the showGrants to show Grants
  *
  * @author mstu15
- * @version 16.01.2017
+ * @version 20.01.2017
  */
 class PurgeDatabaseServerController extends Controller {
 
@@ -71,18 +71,20 @@ class PurgeDatabaseServerController extends Controller {
                 
                 $dbPrefixes = $customDBManager->getAccountNames($accTypePrefix);
 
-                foreach ($accNames as $accName) {
-                    foreach ($hosts as $host) {
-                        // Drop all existing accounts
-                        $customDBManager->dropAccount($accName, $host);
-                    }
-                    /*
-                     *  Drop all existing private DBs (movieDB last because it is used to
-                     *  get the account names
-                     */
-                    $customDBManager->dropDB($dbPrefixes . "_testDB");
-                    $customDBManager->dropDB($dbPrefixes . "_movieDB");
+                foreach ($accNames as $index => $accName) {
+                    // Drop account on its host
+                    $customDBManager->dropAccount($accName, $hostNames[$index]);
                 }
+                
+                foreach ($dbPrefixes as $dbPrefix){
+                    /*
+                     *  Drop all existing private DBs 
+                     */
+                    $customDBManager->dropDB($dbPrefix . "_testDB");
+                    $customDBManager->dropDB($dbPrefix . "_movieDB");
+                }
+                
+                
                 return view('success', ['operation' => 'Purge Database Server', 'message' => 'Purged Database Server.']);
             } else {
                 return view('failure', ['operation' => 'Purge Database Server', 'pointOfFailure' => 'Sure Check', 'message' => 'Checkbox was not ticked.']);
