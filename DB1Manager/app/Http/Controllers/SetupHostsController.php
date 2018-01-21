@@ -13,7 +13,7 @@ use Exception;
  * The controller for hosts setup to create the host table and the default host
  *
  * @author mstu15
- * @version 15.01.2018
+ * @version 21.01.2018
  */
 class SetupHostsController extends Controller {
 
@@ -49,7 +49,7 @@ class SetupHostsController extends Controller {
             if ($success) {
                 return view('success', ['operation' => 'Setup Hosts', 'message' => 'Set host table up.']);
             } else {
-                return view('failure', ['operation' => 'Setup Hosts', 'pointOfFailure' => "Setup Hosts Table", 'message' => "Table already exists."]);
+                return view('failure', ['operation' => 'Setup Hosts', 'pointOfFailure' => "Setup Hosts Table", 'message' => "Table already exists. (Already set up)"]);
             }
         } catch (Exception $ex) {
             $line = $ex->getLine();

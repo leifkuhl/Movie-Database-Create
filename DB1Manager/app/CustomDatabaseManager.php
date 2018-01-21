@@ -4,17 +4,13 @@ use Illuminate\Support\Facades\DB;
 use \Illuminate\Support\Facades\App;
 use App\User;
 
-define('VPN', '%.vpn.tu-clausthal.de');   //VPN
-define('RZ', '%.rz.tu-clausthal.de');   //RZ & WLAN for TUC
-define('IFI', '%.in.tu-clausthal.de');    //IFI
-define('TUC', '139.174.%');    //TUC
-define('DEFAULT_HOST', [VPN, IFI, RZ]); //default host
+include 'Constants.php';
 /**
  * Extends the DatabaseManager with custom Database Functions
  * 
  *
  * @author mstu15
- * @version 16.01.2018
+ * @version 21.01.2018
  */
 
 class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {

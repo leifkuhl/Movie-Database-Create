@@ -22,10 +22,13 @@
                     <div class="tab-content">
                         <div id="create" class="tab-pane fade in active">
                             <h3>Create New Accounts</h3>
-                            The account name has the following pattern:<br>
-                            db_<strong><font color="#428bca">{semester}</font></strong><strong><font color="#d9534f">{year}</font></strong>_<strong><font color="#5cb85c">{type}</font></strong><strong><font color="#5bc0de">{index}</font></strong><br>
-                            e.g. db_ws1718_s1 or db_ss18_s1<br>
-                            The year and index are optional and selected automatically when left blanc. The year is set to the current year and the index continues from the account with the highest index.
+                            <p>
+                                Creates new accounts on all hosts, creates personal databases and sets permissions.<br>
+                                The account names have the following pattern:<br>
+                                db_<strong><font color="#428bca">{semester}</font></strong><strong><font color="#d9534f">{year}</font></strong>_<strong><font color="#5cb85c">{type}</font></strong><strong><font color="#5bc0de">{index}</font></strong><br>
+                                e.g. db_ws1718_s1 or db_ss18_s1<br>
+                                The year and index are optional and selected automatically when left blanc. The year is set to the current year and the index continues from the account with the highest index.
+                            </p>
                             <form action="createAccounts">
                                 <div class="form-group">
                                     <label for="accType">Select account <strong><font color="#5cb85c">type</font></strong>:</label>
@@ -58,6 +61,9 @@
                         </div>
                         <div id="delete" class="tab-pane fade">
                             <h3>Delete Accounts</h3>
+                            <p>
+                                Deletes accounts on all hosts, drops personal databases and removes permissions.<br>
+                            </p>
                             <form action="deleteAccounts">
                                 <table class="table table-bordered">
                                     <thead>
@@ -86,6 +92,9 @@
                         </div>
                         <div id="list" class="tab-pane fade">
                             <h3>List All Existing Accounts</h3>
+                            <p>
+                                List accounts and their hosts.<br>
+                            </p>
                             @yield('accountList')
                             <form action="listAccounts#list">
                                 <div class="form-group">
@@ -101,6 +110,9 @@
                         </div>
                         <div id="generate" class="tab-pane fade">
                             <h3>Generate Default Login List</h3>
+                            <p>
+                                Generates list of all accounts with their default passwords.<br>
+                            </p>
                             @yield('loginList')
                             <form action="generateLoginList#generate">
                                 <div class="form-group">
@@ -116,6 +128,9 @@
                         </div>
                         <div id="reset" class="tab-pane fade">
                             <h3>Reset Password to Default</h3>
+                            <p>
+                                Resets password of account to default.<br>
+                            </p>
                             <form action="resetPassword">
                                 <div class="form-group">
                                     <label for="AccountName">Full account name (e.g. db_ws1718_s1):</label>

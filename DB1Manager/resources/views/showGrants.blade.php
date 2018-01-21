@@ -18,6 +18,9 @@
                     <div class="tab-content">
                         <div id="show" class="tab-pane fade in active">
                             <h3>Show Grants</h3>
+                            <p>
+                                Shows Grants an seleced host or all hosts if none selected<br>
+                            </p>
                             @yield('grantList')
                             <form action="show">
                                 <div class="form-group">

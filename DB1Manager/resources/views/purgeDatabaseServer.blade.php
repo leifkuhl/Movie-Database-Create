@@ -18,6 +18,9 @@
                     <div class="tab-content">
                         <div id="purge" class="tab-pane fade in active">
                             <h3>Purge Database Server</h3>
+                            <p>
+                                Deletes all accounts on all hosts and removes all personal databases.
+                            </p>
                             <form action="purge">
                                 <div class="form-group">
                                     <label for="accType">Select account type:</label>

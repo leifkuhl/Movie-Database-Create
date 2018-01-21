@@ -13,7 +13,7 @@ use Exception;
  * The controller for users setup to create the users table and the default user
  *
  * @author mstu15
- * @version 15.01.2018
+ * @version 21.01.2018
  */
 class SetupUsersController extends Controller{
     /**
@@ -48,7 +48,7 @@ class SetupUsersController extends Controller{
         {
                    return redirect('setupHosts'); 
         }else{
-            return view('failure', ['operation' => 'Setup Users', 'pointOfFailure' => "Setup Users Table", 'message' => "Table already exists and is not empty."]);
+            return view('failure', ['operation' => 'Setup Users', 'pointOfFailure' => "Setup Users Table", 'message' => "Table already exists and is not empty. (Already set up)"]);
         
         }
         

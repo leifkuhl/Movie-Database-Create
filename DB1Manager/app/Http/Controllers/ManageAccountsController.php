@@ -14,7 +14,7 @@ use Exception;
  * generate the login list and reset passwords
  *
  * @author mstu15
- * @version 20.01.2018
+ * @version 21.01.2018
  */
 class ManageAccountsController extends Controller {
 
@@ -100,7 +100,7 @@ class ManageAccountsController extends Controller {
 
             $hosts = $customDBManager->getHosts();
 
-            /*             * * * * * * * * * * *
+            /* * * * * * * * * * * *
              * Create the Accounts *
              * * * * * * * * * * * */
 
@@ -120,7 +120,7 @@ class ManageAccountsController extends Controller {
             }
             $highestAccountIndex = $startIndex + $addedCount - 1;
             $currentAccountCount = count($customDBManager->getAccountNames($accTypePrefix));
-            return view('success', ['operation' => 'Create Accounts', 'message' => "Created: \"$addedCount\" from \"$count\" accounts.\nAccount prefix: \"$prefix\"\nTotal number of accounts: \"$currentAccountCount\"\nHighest index of an account: \"$highestAccountIndex\""]);
+            return view('success', ['operation' => 'Create Accounts', 'message' => "Created: \"$addedCount\" from \"$count\" accounts.\nAccount prefix: \"$prefix\"\nTotal number of accounts: \"$currentAccountCount\"\nHighest index of an account with current prefix: \"$highestAccountIndex\""]);
         } catch (Exception $ex) {
             $line = $ex->getLine();
             $message = $ex->getMessage();
@@ -131,12 +131,9 @@ class ManageAccountsController extends Controller {
 
     /**
      * Delete accounts
-     * @param request the form data consists of:
-     *      accType student or tutor accounts,
-     *      count number of accounts to create,
-     *      semesterType summer or winter semester,
-     *      semesterYear Year (e.g. for 2017/18: 1718, for 2018: 18)
-     *      startIndex the starting account index
+     * @param request the form data consists of (all optional):
+     *      select-all = "on"
+     *      account Names (e.g. db1_ws1718_s1) = "on"
      * @return Success or Failure
      */
     public function deleteAccounts(Request $request) {

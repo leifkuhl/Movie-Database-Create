@@ -14,7 +14,7 @@
                 <div class="panel-body">
                     <div class="tab-content">
                         <div id="setupUsers">
-                            <h4>Setup the users table and adds the default account so that login is possible.<br>
+                            <h4>Setup the users table and adds the default account to enable login on this site.<br>
                                 Afterwards you are redirected to login and the setup of the hosts table.<br>
                             </h4>
                             <form action="setupUsers">

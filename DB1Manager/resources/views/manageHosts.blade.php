@@ -20,13 +20,15 @@
                     <div class="tab-content">
                         <div id="list" class="tab-pane fade in active">
                             <h3>List Hosts</h3>
+                            <p>Lists all existing hosts.</p>
                             @yield('hostList')
-                            <form action="listHosts">
+                            <form action="listHosts#list">
                                 <button type="submit" class="btn btn-primary">List Hosts</button>
                             </form>
                         </div>
                         <div id="add" class="tab-pane fade">
                             <h3>Add Host</h3>
+                            <p>Adds an additional host with set name and set permissions for all existing accounts.</p>
                             <form action="addHost">
                                 <div class="form-group">
                                     <label for="hostName">Host name</label>
@@ -37,6 +39,7 @@
                         </div>
                         <div id="remove" class="tab-pane fade">
                             <h3>Remove Host</h3>
+                            <p>Removes an host with set name and removes permissions for all existing accounts.</p>
                             <form action="removeHost">
                                 <div class="form-group">
                                     <label for="hostName">Host name</label>
@@ -52,4 +55,9 @@
         </div>
     </div>
 </div>
+@endsection
+@section('scripts')
+<script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{{ URL::asset('js/keepSelectedTab.js') }}"></script>
 @endsection
