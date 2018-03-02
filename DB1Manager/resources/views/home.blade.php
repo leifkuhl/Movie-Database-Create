@@ -48,6 +48,7 @@
                     <p>
                         Setup the server for first time use (required):<br><a href="setup">Setup the users table and adds the default account to enable login on this site.</a><br>
                         <a href="setupHosts">Setup the host table and adds the default hosts.</a>
+                </div>
             </div>
         </div>
     </div>

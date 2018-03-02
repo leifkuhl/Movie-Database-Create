@@ -8,20 +8,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use CustomDatabaseManager;
 use Exception;
+use Illuminate\Support\Facades\File;
 
 /**
  * The controller for the account manager used to create and list accounts
  * generate the login list and reset passwords
  *
  * @author mstu15
- * @version 21.01.2018
+ * @version 03.03.2018
  */
 class ManageAccountsController extends Controller {
-
+    
     public function __construct() {
         $this->middleware('auth');
     }
-
+    
+     
     /**
      * Show the manageAccounts website
      *
@@ -45,9 +47,10 @@ class ManageAccountsController extends Controller {
      */
     public function createAccounts(Request $request) {
         $addedCount = 0;
+        $countToAdd;
         try {
             $accType = $request->input('accType');
-            $count = $request->input('count');
+            $countToAdd = $request->input('count');
             $semesterType = $request->input('semesterType');
             $semesterYear = $request->input('semesterYear');
             $startIndex = $request->input('startIndex');
@@ -60,8 +63,8 @@ class ManageAccountsController extends Controller {
             $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
 
 
-            if ($count <= 0) {
-                return view('failure', ['operation' => 'Create Accounts', 'pointOfFailure' => "Validating Inputs", 'message' => "Number of accounts: \"$count\" is 0 or less or not a Number"]);
+            if ($countToAdd <= 0) {
+                return view('failure', ['operation' => 'Create Accounts', 'pointOfFailure' => "Validating Inputs", 'message' => "Number of accounts: \"$countToAdd\" is 0 or less or not a Number"]);
             }
 
             // Checks if the semesterYear was left empty and fills it if that was the case
@@ -104,7 +107,8 @@ class ManageAccountsController extends Controller {
              * Create the Accounts *
              * * * * * * * * * * * */
 
-            for ($i = $startIndex; $i < $count + $startIndex; $i++) {
+            for ($i = $startIndex; $i < $countToAdd + $startIndex; $i++) {
+                File::put('..\app\statusMessage.txt',"Added $addedCount/$countToAdd Accounts");
                 $accName = $prefix . $i;
 
                 // Replicates MovieDB
@@ -120,12 +124,14 @@ class ManageAccountsController extends Controller {
             }
             $highestAccountIndex = $startIndex + $addedCount - 1;
             $currentAccountCount = count($customDBManager->getAccountNames($accTypePrefix));
-            return view('success', ['operation' => 'Create Accounts', 'message' => "Created: \"$addedCount\" from \"$count\" accounts.\nAccount prefix: \"$prefix\"\nTotal number of accounts: \"$currentAccountCount\"\nHighest index of an account with current prefix: \"$highestAccountIndex\""]);
+            File::put('..\app\statusMessage.txt',"");
+            return view('success', ['operation' => 'Create Accounts', 'message' => "Created: \"$addedCount\" from \"$countToAdd\" account(s).\nAccount prefix: \"$prefix\"\nTotal number of accounts: \"$currentAccountCount\"\nHighest index of an account with current prefix: \"$highestAccountIndex\""]);
         } catch (Exception $ex) {
             $line = $ex->getLine();
             $message = $ex->getMessage();
             $fileName = $ex->getFile();
-            return view('failure', ['operation' => 'Create Accounts', 'pointOfFailure' => "$fileName Line: $line", 'message' => "Created $addedCount accounts. Exception message: $message"]);
+            File::put('..\app\statusMessage.txt',"");
+            return view('failure', ['operation' => 'Create Accounts', 'pointOfFailure' => "$fileName Line: $line", 'message' => "Created: \"$addedCount\" from \"$countToAdd\" account(s). Exception message: $message"]);
         }
     }
 
@@ -138,6 +144,7 @@ class ManageAccountsController extends Controller {
      */
     public function deleteAccounts(Request $request) {
         $deletedCount = 0;
+        $countToDelete;
         try {
             $customDBManager = new CustomDatabaseManager(app(), app('db.factory'));
 
@@ -149,12 +156,18 @@ class ManageAccountsController extends Controller {
             // get unique Account Names
             $uniqueAccNames = $customDBManager->getAccountNames("");
             
-            
+            $countToDelete = count($request->all());
+            if($request->input('select-all'))
+            {
+                $countToDelete--;
+            }
             $maxNames = count($uniqueAccNames);
-
+            
+            // check every account if the checkbox to delete it is ticked
             for ($i = 0; $i < $maxNames; $i++) {
+                File::put('..\app\statusMessage.txt',"Deleted $deletedCount/$countToDelete account(s)");
                 $input = $request->input($uniqueAccNames[$i]);
-                // input is null if checkbox is not checked otherwise it is "on"
+                // input is null if checkbox of the account is not checked otherwise it is "on"
                 if ($input == null) {
                     continue;
                 } else {
@@ -170,12 +183,14 @@ class ManageAccountsController extends Controller {
                     $deletedCount++;
                 }
             }
-            return view('success', ['operation' => 'Delete Accounts', 'message' => "Deleted: \"$deletedCount\" from \"$deletedCount\" accounts"]);
+            File::put('..\app\statusMessage.txt',"");
+            return view('success', ['operation' => 'Delete Accounts', 'message' => "Deleted: \"$deletedCount\" from \"$countToDelete\" account(s)."]);
         } catch (Exception $ex) {
             $line = $ex->getLine();
             $message = $ex->getMessage();
             $fileName = $ex->getFile();
-            return view('failure', ['operation' => 'Delete Accounts', 'pointOfFailure' => "$fileName Line: $line", 'message' => "Deleted $deletedCount accounts. Exception message: $message"]);
+            File::put('..\app\statusMessage.txt',"");
+            return view('failure', ['operation' => 'Delete Accounts', 'pointOfFailure' => "$fileName Line: $line", 'message' => "Deleted \"$deletedCount\" from \"$countToDelete\" account(s). Exception message: \"$message\""]);
         }
     }
 

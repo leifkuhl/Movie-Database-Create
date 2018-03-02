@@ -21,6 +21,7 @@
                     </ul>
                     <div class="tab-content">
                         <div id="create" class="tab-pane fade in active">
+                            <div id="statusAdd"></div>
                             <h3>Create New Accounts</h3>
                             <p>
                                 Creates new accounts on all hosts, creates personal databases and sets permissions.<br>
@@ -60,6 +61,7 @@
                             </form>
                         </div>
                         <div id="delete" class="tab-pane fade">
+                            <div id="statusDelete"></div>
                             <h3>Delete Accounts</h3>
                             <p>
                                 Deletes accounts on all hosts, drops personal databases and removes permissions.<br>
@@ -87,6 +89,7 @@
                                     <?php endforeach; ?>
                                     </tbody>
                                 </table>
+                                <div id="statusDelete2"></div>
                                 <button type="submit" class="btn btn-danger">Delete</button>
                             </form>
                         </div>
@@ -151,4 +154,27 @@
 <script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="{{ URL::asset('js/selectAllCheckbox.js') }}"></script>
 <script type="text/javascript" src="{{ URL::asset('js/keepSelectedTab.js') }}"></script>
+<script>
+    update();
+    var statusIntervalId = window.setInterval(update, 1000);
+    function update() {
+    $.ajax({
+        url: 'getAccountMessage',
+        dataType: 'text',
+        success: function(data) {
+            if(data.trim() == ""){
+                $("#statusAdd").html('');
+                $("#statusDelete").html('');
+                $("#statusDelete2").html('');
+            }
+            else{
+                var hmtl = '<div class="alert alert-info">'.concat(data).concat('</div>');
+            $("#statusAdd").html(hmtl);
+            $("#statusDelete").html(hmtl);
+            $("#statusDelete2").html(hmtl);
+            }
+        }
+    });
+}
+</script>
 @endsection

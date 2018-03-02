@@ -1,4 +1,11 @@
-<?php
+ <?php
+ /**
+ * Some constants
+ * 
+ *
+ * @author mstu15
+ * @version 02.03.2018
+ */
 define('VPN', '%.vpn.tu-clausthal.de');   //VPN
 define('RZ', '%.rz.tu-clausthal.de');   //RZ & WLAN for TUC
 define('IFI', '%.in.tu-clausthal.de');    //IFI

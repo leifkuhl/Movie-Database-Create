@@ -8,12 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use CustomDatabaseManager;
 use Exception;
+use Illuminate\Support\Facades\File;
 
 /**
  * The controller for the showGrants to show Grants
  *
  * @author mstu15
- * @version 20.01.2017
+ * @version 03.03.2017
  */
 class PurgeDatabaseServerController extends Controller {
 
@@ -70,13 +71,22 @@ class PurgeDatabaseServerController extends Controller {
                  */
                 
                 $dbPrefixes = $customDBManager->getAccountNames($accTypePrefix);
-
+                
+                $accNameCount = count($accNames);
+                $dbPrefixesCount = count($dbPrefixes);
+                
                 foreach ($accNames as $index => $accName) {
+                    File::put('..\app\statusMessage.txt',"<h4><strong>Purging Database Server</strong></h4>
+                                <p><strong>Deleting accounts:</strong> In progress ($index/$accNameCount)</p>
+                                <p><strong>Deleting databases:</strong> On hold (0/$dbPrefixesCount)</p>");
                     // Drop account on its host
                     $customDBManager->dropAccount($accName, $hostNames[$index]);
                 }
                 
-                foreach ($dbPrefixes as $dbPrefix){
+                foreach ($dbPrefixes as $index => $dbPrefix){
+                    File::put('..\app\statusMessage.txt',"<h4><strong>Purging Database Server</strong></h4>
+                                <p><strong>Deleting accounts:</strong> Completed ($accNameCount/$accNameCount)</p>
+                                <p><strong>Deleting databases:</strong> In progress ($index/$dbPrefixesCount)</p>");
                     /*
                      *  Drop all existing private DBs 
                      */
@@ -84,15 +94,17 @@ class PurgeDatabaseServerController extends Controller {
                     $customDBManager->dropDB($dbPrefix . "_movieDB");
                 }
                 
-                
+                File::put('..\app\statusMessage.txt',"");
                 return view('success', ['operation' => 'Purge Database Server', 'message' => 'Purged Database Server.']);
             } else {
+                File::put('..\app\statusMessage.txt',"");
                 return view('failure', ['operation' => 'Purge Database Server', 'pointOfFailure' => 'Validating Inputs', 'message' => 'Checkbox was not ticked.']);
             }
         } catch (Exception $ex) {
             $line = $ex->getLine();
             $message = $ex->getMessage();
             $fileName = $ex->getFile();
+            File::put('..\app\statusMessage.txt',"");
             return view('failure', ['operation' => 'Purge Database Server', 'pointOfFailure' => "$fileName Line: $line", 'message' => "$message"]);
         }
     }

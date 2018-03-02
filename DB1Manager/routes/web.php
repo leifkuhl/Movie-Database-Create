@@ -1,5 +1,4 @@
 <?php
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -10,6 +9,10 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+/**
+ * @version 03.03.2018
+ */
 
 Auth::routes();
 
@@ -31,6 +34,8 @@ Route::get('/deleteAccounts',  'ManageAccountsController@deleteAccounts');
 Route::get('/listAccounts',  'ManageAccountsController@listAccounts');
 Route::get('/generateLoginList',  'ManageAccountsController@generateLoginList');
 Route::get('/resetPassword',  'ManageAccountsController@resetPassword');
+
+Route::get('/getAccountMessage',  'StatusMessageController@getMessage');
 
 Route::get('/manageHosts', 'ManageHostsController@index')->name('manageHosts');
 Route::get('/listHosts', 'ManageHostsController@listHosts');
