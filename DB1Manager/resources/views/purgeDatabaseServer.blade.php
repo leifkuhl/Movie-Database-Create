@@ -46,7 +46,6 @@
 @endsection
 @section('scripts')
 <script src="//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
-<script src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script>
     update();
     var statusIntervalId = window.setInterval(update, 1000);
@@ -56,7 +55,7 @@
         dataType: 'text',
         success: function(data) {
             if(data.trim() == ""){
-                //$("#status").html('');
+                $("#status").html('');
             }
             else{
                 var hmtl = '<div class="alert alert-info">'.concat(data).concat('</div>');
