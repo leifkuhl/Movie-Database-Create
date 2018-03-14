@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-include '..\\app\\CustomDatabaseManager.php';
+include '../app/CustomDatabaseManager.php';
 
 use Illuminate\Http\Request;
 use CustomDatabaseManager;

@@ -18,6 +18,6 @@ class StatusMessageController extends Controller{
      * @return statusMessage.txt content
      */
     public function getMessage() {
-        return File::get('..\app\statusMessage.txt');
+        return File::get('../app/statusMessage.txt');
     }
 }
