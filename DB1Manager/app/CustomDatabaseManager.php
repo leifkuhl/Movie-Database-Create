@@ -112,16 +112,16 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
         // This will add our new connection to the run-time configuration for the duration of the request.
         App::make('config')->set('database.connections.' . $db_name, $newConnection);
 
-        DB::connection($db_name)->unprepared(File::get('..\database\sql_files\1_create_all-lower.sql'));
-        DB::connection($db_name)->unprepared(File::get('..\database\sql_files\2_movie_table.sql'));
-        DB::connection($db_name)->unprepared(File::get('..\database\sql_files\3_person_table.sql'));
-        DB::connection($db_name)->unprepared(File::get('..\database\sql_files\4_award_and_restriction_cat.sql'));
-        DB::connection($db_name)->unprepared(File::get('..\database\sql_files\5_staff_tables.sql'));
-        DB::connection($db_name)->unprepared(File::get('..\database\sql_files\6_movie_awards.sql'));
-        DB::connection($db_name)->unprepared(File::get('..\database\sql_files\7_scene_appearance.sql'));
-        DB::connection($db_name)->unprepared(File::get('..\database\sql_files\insert.sql'));
-        DB::connection($db_name)->unprepared(File::get('..\database\sql_files\update_2005.sql'));
-        DB::connection($db_name)->unprepared(File::get('..\database\sql_files\update_2005_2.sql'));
+        DB::connection($db_name)->unprepared(File::get('../database/sql_files/1_create_all-lower.sql'));
+        DB::connection($db_name)->unprepared(File::get('../database/sql_files/2_movie_table.sql'));
+        DB::connection($db_name)->unprepared(File::get('../database/sql_files/3_person_table.sql'));
+        DB::connection($db_name)->unprepared(File::get('../database/sql_files/4_award_and_restriction_cat.sql'));
+        DB::connection($db_name)->unprepared(File::get('../database/sql_files/5_staff_tables.sql'));
+        DB::connection($db_name)->unprepared(File::get('../database/sql_files/6_movie_awards.sql'));
+        DB::connection($db_name)->unprepared(File::get('../database/sql_files/7_scene_appearance.sql'));
+        DB::connection($db_name)->unprepared(File::get('../database/sql_files/insert.sql'));
+        DB::connection($db_name)->unprepared(File::get('../database/sql_files/update_2005.sql'));
+        DB::connection($db_name)->unprepared(File::get('../database/sql_files/update_2005_2.sql'));
     }
 
     /**
