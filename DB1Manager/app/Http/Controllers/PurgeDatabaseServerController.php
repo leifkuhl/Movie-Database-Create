@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-include '..\app\CustomDatabaseManager.php';
+include '..\\app\\CustomDatabaseManager.php';
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\File;
  * The controller for the showGrants to show Grants
  *
  * @author mstu15
- * @version 03.03.2017
+ * @version 14.03.2018
  */
 class PurgeDatabaseServerController extends Controller {
 

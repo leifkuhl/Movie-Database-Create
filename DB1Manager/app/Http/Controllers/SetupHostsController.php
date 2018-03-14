@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-include '..\app\CustomDatabaseManager.php';
+include '..\\app\\CustomDatabaseManager.php';
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +13,7 @@ use Exception;
  * The controller for hosts setup to create the host table and the default host
  *
  * @author mstu15
- * @version 21.01.2018
+ * @version 14.03.2018
  */
 class SetupHostsController extends Controller {
 

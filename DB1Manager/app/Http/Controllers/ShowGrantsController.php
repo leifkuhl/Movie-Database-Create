@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-include '..\app\CustomDatabaseManager.php';
+include '..\\app\\CustomDatabaseManager.php';
 
 use Illuminate\Http\Request;
 use CustomDatabaseManager;
@@ -12,7 +12,7 @@ use Exception;
  * The controller for the showGrants to show Grants
  *
  * @author mstu15
- * @version 16.01.2018
+ * @version 14.03.2018
  */
 class ShowGrantsController extends Controller {
 

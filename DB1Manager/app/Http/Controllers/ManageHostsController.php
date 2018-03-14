@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-include '..\app\CustomDatabaseManager.php';
+include '..\\app\\CustomDatabaseManager.php';
 
 use Illuminate\Http\Request;
 use CustomDatabaseManager;
@@ -12,7 +12,7 @@ use Exception;
  * The controller for the host manager used to add and remove Hosts
  *
  * @author mstu15
- * @version 20.01.2017
+ * @version 14.03.2018
  */
 class ManageHostsController extends Controller {
 

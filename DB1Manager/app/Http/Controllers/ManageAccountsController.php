@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-include '..\app\CustomDatabaseManager.php';
+include '..\\app\\CustomDatabaseManager.php';
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\File;
  * generate the login list and reset passwords
  *
  * @author mstu15
- * @version 03.03.2018
+ * @version 14.03.2018
  */
 class ManageAccountsController extends Controller {
     
