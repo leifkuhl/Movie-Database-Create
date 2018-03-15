@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\File;
  * To get the Current Status Message
  *
  * @author mstu15
- * @version 03.03.2018
+ * @version 15.03.2018
  */
 class StatusMessageController extends Controller{
     public function __construct() {

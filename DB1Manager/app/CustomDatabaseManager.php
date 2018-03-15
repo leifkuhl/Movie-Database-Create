@@ -10,7 +10,7 @@ include 'Constants.php';
  * 
  *
  * @author mstu15
- * @version 14.03.2018
+ * @version 15.03.2018
  */
 
 class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
@@ -231,7 +231,7 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
      * @return array with account names
      */
     function getAccountNames($accTypePrefix) {
-        $databaseNames = array_map('reset', DB::select("SHOW DATABASES LIKE 'db_%_$accTypePrefix%'"));
+        $databaseNames = array_map('reset', DB::select("SHOW DATABASES LIKE '".ACCOUNT_PATTERN_PREFIX."$accTypePrefix%'"));
         $accNames = [];
         foreach($databaseNames as $index => $databaseName)
         {
@@ -239,6 +239,8 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
             // Remove _moviedb or _testdb suffixes
             $databaseNameCopy = str_replace("_moviedb", "", $databaseNameCopy);
             $databaseNameCopy = str_replace("_testdb", "", $databaseNameCopy);
+            $databaseNameCopy = str_replace("_movieDB", "", $databaseNameCopy);
+            $databaseNameCopy = str_replace("_testDB", "", $databaseNameCopy);
             
             $accNames[$index] = $databaseNameCopy;
         }
@@ -263,7 +265,7 @@ class CustomDatabaseManager extends \Illuminate\Database\DatabaseManager {
      * @return array with account names and corresponding hosts
      */
     function getAccountNamesAndHosts($accTypePrefix) {
-        $names = (DB::select("SELECT user,host FROM mysql.user WHERE user LIKE 'db_%_$accTypePrefix%' ORDER BY CHAR_LENGTH(user) ASC, user ASC"));
+        $names = (DB::select("SELECT user,host FROM mysql.user WHERE user LIKE '".ACCOUNT_PATTERN_PREFIX."$accTypePrefix%' ORDER BY CHAR_LENGTH(user) ASC, user ASC"));
         $accNames = [];
         $hostNames = [];
         foreach($names as $index => $name)

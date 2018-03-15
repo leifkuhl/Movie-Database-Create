@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\File;
  * generate the login list and reset passwords
  *
  * @author mstu15
- * @version 14.03.2018
+ * @version 15.03.2018
  */
 class ManageAccountsController extends Controller {
     
@@ -108,7 +108,7 @@ class ManageAccountsController extends Controller {
              * * * * * * * * * * * */
 
             for ($i = $startIndex; $i < $countToAdd + $startIndex; $i++) {
-                File::put('..\app\statusMessage.txt',"Added $addedCount/$countToAdd Accounts");
+                File::put('../app/statusMessage.txt',"Added $addedCount/$countToAdd Accounts");
                 $accName = $prefix . $i;
 
                 // Replicates MovieDB
@@ -124,13 +124,13 @@ class ManageAccountsController extends Controller {
             }
             $highestAccountIndex = $startIndex + $addedCount - 1;
             $currentAccountCount = count($customDBManager->getAccountNames($accTypePrefix));
-            File::put('..\app\statusMessage.txt',"");
+            File::put('../app/statusMessage.txt',"");
             return view('success', ['operation' => 'Create Accounts', 'message' => "Created: \"$addedCount\" from \"$countToAdd\" account(s).\nAccount prefix: \"$prefix\"\nTotal number of accounts: \"$currentAccountCount\"\nHighest index of an account with current prefix: \"$highestAccountIndex\""]);
         } catch (Exception $ex) {
             $line = $ex->getLine();
             $message = $ex->getMessage();
             $fileName = $ex->getFile();
-            File::put('..\app\statusMessage.txt',"");
+            File::put('../app/statusMessage.txt',"");
             return view('failure', ['operation' => 'Create Accounts', 'pointOfFailure' => "$fileName Line: $line", 'message' => "Created: \"$addedCount\" from \"$countToAdd\" account(s). Exception message: $message"]);
         }
     }
@@ -165,7 +165,7 @@ class ManageAccountsController extends Controller {
             
             // check every account if the checkbox to delete it is ticked
             for ($i = 0; $i < $maxNames; $i++) {
-                File::put('..\app\statusMessage.txt',"Deleted $deletedCount/$countToDelete account(s)");
+                File::put('../app/statusMessage.txt',"Deleted $deletedCount/$countToDelete account(s)");
                 $input = $request->input($uniqueAccNames[$i]);
                 // input is null if checkbox of the account is not checked otherwise it is "on"
                 if ($input == null) {
@@ -183,13 +183,13 @@ class ManageAccountsController extends Controller {
                     $deletedCount++;
                 }
             }
-            File::put('..\app\statusMessage.txt',"");
+            File::put('../app/statusMessage.txt',"");
             return view('success', ['operation' => 'Delete Accounts', 'message' => "Deleted: \"$deletedCount\" from \"$countToDelete\" account(s)."]);
         } catch (Exception $ex) {
             $line = $ex->getLine();
             $message = $ex->getMessage();
             $fileName = $ex->getFile();
-            File::put('..\app\statusMessage.txt',"");
+            File::put('../app/statusMessage.txt',"");
             return view('failure', ['operation' => 'Delete Accounts', 'pointOfFailure' => "$fileName Line: $line", 'message' => "Deleted \"$deletedCount\" from \"$countToDelete\" account(s). Exception message: \"$message\""]);
         }
     }
