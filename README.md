@@ -55,7 +55,7 @@ Creating accounts will automatically create the personal databases and set permi
 
 #### Delete Accounts <a name="delete"></a>
 
-![alt text](https://github.com/leifkuhl/Movie-Database-Create/blob/master/ReadmeImages/2.2%20Delete%20Accounts.PNG)
+![alt text](https://github.com/leifkuhl/Movie-Database-Create/blob/17c3be8b0f8b3695e0c44529a1988816805e23b1/ReadmeImages/2.2%20Delete%20Accounts.PNG)
 
 To delete an account and their personal databases you can select the accounts and press delete.
 
@@ -98,3 +98,37 @@ Select account type and host name (when you do not want to see permissions for a
 Deletes all accounts and private databases. Tick the checkbox when you are sure you want to purge.
 
 ## Dev Manual <a name="devManual"></a>
+
+1. [Versions](#versions)
+
+2. [Installation Help](#help)
+
+3. [Laravel Structure](#structure)
+
+### Versions <a name="versions"></a>
+
+Laravel: 5.5
+
+PHP: 7.1
+
+MariaDB: 10.1
+
+### Installation Help <a name="help"></a>
+
+Install correct PHP MariaDB and Laravel Version.
+
+To setup Laravel (install all required packages e.g. mbstring 7.1 and php-xml 7.1):
+
+https://www.rosehosting.com/blog/install-laravel-on-ubuntu-16-04/
+
+Merge the new project with this project (or do "composer install" in downloaded project folder) and reset proper ownership for the files. 
+
+For the .env file set APP_NAME ="DB 1 Manager", APP_URL=preferedURL, DB_DATABASE=Databasename (dont let it start with db or a bug will appear), DB_USERNAME=UserThatHasRootPermissions and DB_PASSWORD=PasswordForUser.
+
+It is important that the user hast root permissions (ALL ON *.*) but the user itself can not be root (atleast in Ubuntu 16.04).
+
+### Laravel Structure <a name="structure"></a>
+
+The general structure  can be found on https://laravel.com/docs/5.5 folders with additional files are: /app for the CustomDatabaseManager.php, Constants.php and the statusMessage.txt; /app/Http/Controllers for the Controllers; /public/js for JavaScripts; Ressources/views for the webpages.
+
+The files itself contain commentary
