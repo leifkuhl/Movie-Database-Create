@@ -132,3 +132,18 @@ It is important that the user hast root permissions (ALL ON *.*) but the user it
 The general structure  can be found on https://laravel.com/docs/5.5 folders with additional files are: /app for the CustomDatabaseManager.php, Constants.php and the statusMessage.txt; /app/Http/Controllers for the Controllers; /public/js for JavaScripts; Ressources/views for the webpages.
 
 The files itself contain commentary
+
+/app/CustomDatabaseManager.php:
+
+Contains custom database functions
+
+/app/StatusMessage.txt:
+
+File to which the current status message is written to
+
+/app/Controllers:
+
+Controllers for the different sites
+
+
+
