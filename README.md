@@ -125,25 +125,25 @@ Merge the new project with this project (or do "composer install" in downloaded 
 
 For the .env file set APP_NAME ="DB 1 Manager", APP_URL=preferedURL, DB_DATABASE=Databasename (dont let it start with db or a bug will appear), DB_USERNAME=UserThatHasRootPermissions and DB_PASSWORD=PasswordForUser.
 
-It is important that the user hast root permissions (ALL ON *.*) but the user itself can not be root (atleast in Ubuntu 16.04).
+It is important that the user hast root permissions (ALL ON *.* WITH GRANT OPTION) but the user itself can not be root (atleast in Ubuntu 16.04).
 
 ### Laravel Structure <a name="structure"></a>
 
 The general structure  can be found on https://laravel.com/docs/5.5 folders with additional files are: /app for the CustomDatabaseManager.php, Constants.php and the statusMessage.txt; /app/Http/Controllers for the Controllers; /public/js for JavaScripts; Ressources/views for the webpages.
 
-The files itself contain commentary
+The files itself contain commentary.
 
 /app/CustomDatabaseManager.php:
 
-Contains custom database functions
+Contains custom database functions.
 
 /app/StatusMessage.txt:
 
-File to which the current status message is written to
+File to which the current status message is written to.
 
 /app/Controllers:
 
-Controllers for the different sites
+Controllers for the different sites.
 
 
 
