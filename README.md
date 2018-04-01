@@ -121,8 +121,21 @@ To setup Laravel (install all required packages e.g. mbstring 7.1 and php-xml 7.
 
 https://www.rosehosting.com/blog/install-laravel-on-ubuntu-16-04/
 
-Merge the new project with this project (or do "composer install" in downloaded project folder) and reset proper ownership for the files. 
+Merge the new project with this project (or do "composer install" in downloaded project folder) and reset proper ownership for the files. Make sure to change following functions in app/CustomDatabaseManager.php:
+```
+function getDefaultPwd($accName) {
+   return 123456; // replace with password generating algorithm
+}
 
+setupUsers() {
+   ...
+   User::create([
+      'name' => 'admin', // Choose default login name
+      'password' => bcrypt("dummy"), // Choose default password
+   ]); // replace with standard password for user
+   ...
+}
+```
 For the .env file set APP_NAME ="DB 1 Manager", APP_URL=preferedURL, DB_DATABASE=Databasename (dont let it start with db or a bug will appear), DB_USERNAME=UserThatHasRootPermissions and DB_PASSWORD=PasswordForUser.
 
 It is important that the user hast root permissions (ALL ON *.* WITH GRANT OPTION) but the user itself can not be root (atleast in Ubuntu 16.04).
@@ -144,6 +157,3 @@ File to which the current status message is written to.
 /app/Controllers:
 
 Controllers for the different sites.
-
-
-
