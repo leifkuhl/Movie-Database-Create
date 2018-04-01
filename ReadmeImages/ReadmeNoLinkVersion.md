@@ -1,9 +1,9 @@
 # Movie-Database-Create
 Movie Database-Create Script for the TUC
 
-This Readme contains a User Manualand a Dev Manual
+This Readme contains a User Manual and a Dev Manual
 
-## User Manual <a name="userManual"></a>
+## User Manual
 
 1. Setup
    
